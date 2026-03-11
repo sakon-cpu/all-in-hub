@@ -5,7 +5,11 @@ export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Paths that are always allowed
-    const publicPaths = ['/login', '/api/auth', '/_next', '/favicon.ico', '/hero-background.mp4', '/drone-neokabukicho.mp4', '/nexus_protocol_thumb.png', '/corporate_work_1.png'];
+    const publicPaths = [
+        '/login', '/admin',
+        '/api/auth', '/api/admin-auth', '/api/works', '/api/news', '/api/notes', '/api/seed',
+        '/_next', '/favicon.ico', '/hero-background.mp4', '/drone-neokabukicho.mp4', '/nexus_protocol_thumb.png', '/corporate_work_1.png'
+    ];
 
     if (publicPaths.some(path => pathname.startsWith(path))) {
         return NextResponse.next();
