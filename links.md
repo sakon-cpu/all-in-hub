@@ -8,6 +8,7 @@
 
 - **🔗 URL**: https://all-in-hub-4pg9.vercel.app
 - **🔑 パスワード**: `allhero2026`
+- **⚙️ 管理画面**: [https://all-in-hub-4pg9.vercel.app/admin](https://all-in-hub-4pg9.vercel.app/admin) (ローカル環境の場合は [http://localhost:3000/admin](http://localhost:3000/admin) )
 
 ## 📖 その他
 

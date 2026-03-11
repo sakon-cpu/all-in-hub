@@ -19,6 +19,8 @@ export interface NewsItem {
     titleJa: string;
     titleEn: string;
     type: 'info' | 'update' | 'recruit';
+    contentJa?: string;
+    contentEn?: string;
 }
 
 export interface Note {

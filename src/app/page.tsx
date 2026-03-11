@@ -24,168 +24,7 @@ import { handleSnsClick } from "@/lib/sns";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRef, useState, useEffect } from "react";
 
-const mockAiNews = [
-  {
-    title: "OpenAI's Sora 2 Powers Bing Video Creator (Mar 5, 2026)",
-    url: "https://www.neowin.net"
-  },
-  {
-    title: "Netflix Acquires InterPositive AI Filmmaking Tech (Mar 8, 2026)",
-    url: "https://www.weareiowa.com"
-  },
-  {
-    title: "Higgsfield Cinema Studio 2.0 Launches (Mar 2026)",
-    url: "https://www.youtube.com"
-  },
-  {
-    title: "Academy Awards Maintains Neutral Stance on Generative AI",
-    url: "https://www.enca.com"
-  }
-];
 
-const mockSiteNewsJa = [
-  { id: 1, date: "2026.03.11", title: "新作「ネオ歌舞伎町2126」を公開。30名のパートナークリエイターが参画しました。", type: "info" },
-  { id: 2, date: "2026.03.05", title: "制作ノート#11：サウンドデザインの自動化について更新。", type: "update" },
-  { id: 3, date: "2026.02.28", title: "ALL CINEMAクリエイター募集要項を改訂しました。", type: "recruit" }
-];
-
-const mockSiteNewsEn = [
-  { id: 1, date: "2026.03.11", title: "New release: 'NEO KABUKICHO 2126'. 30 partner creators joined.", type: "info" },
-  { id: 2, date: "2026.03.05", title: "Production Note #11: Automation in Sound Design.", type: "update" },
-  { id: 3, date: "2026.02.28", title: "Updated guidelines for ALL CINEMA Creator applications.", type: "recruit" }
-];
-
-const mockWorksJa = [
-  {
-    id: 1,
-    no: "01",
-    title: "ネオ歌舞伎町2126",
-    synopsis: "AIと人間が共創する未来の物語。記憶の境界線を探る実験的短編。",
-    date: "2026.03.10",
-    thumbnail: "/nexus_protocol_thumb.png",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 3,
-    no: "03",
-    title: "電脳の境界線：フロンティア",
-    synopsis: "大手テック企業とのコラボレーション。マインドアップロードの法理を問う。",
-    date: "2026.03.15",
-    thumbnail: "/corporate_work_1.png",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 4,
-    no: "04",
-    title: "起源のサイバネティクス",
-    synopsis: "金融都市シブヤを舞台に、意思を持つアルゴリズムが均衡を破る。",
-    date: "2026.04.01",
-    thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 5,
-    no: "05",
-    title: "Neon Pulse: 感情の残滓",
-    synopsis: "次世代ファッションブランドとのタイアップ。感情を纏う服の物語。",
-    date: "2026.04.20",
-    thumbnail: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 6,
-    no: "06",
-    title: "シリコン・ソウル：自律の旅",
-    synopsis: "自動運転車が知覚した一瞬の愛。モビリティの未来を描く。",
-    date: "2026.05.05",
-    thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 7,
-    no: "07",
-    title: "グローバル・ネクサス",
-    synopsis: "AIが管理する物流ネットワークの先にあった、忘れられた村の物語。",
-    date: "2026.05.25",
-    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 8,
-    no: "08",
-    title: "再生の脈動：プラネット・コア",
-    synopsis: "エネルギーソリューション企業提携。地球再生を誓うAIの視点。",
-    date: "2026.06.10",
-    thumbnail: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  }
-];
-
-const mockWorksEn = [
-  {
-    id: 1,
-    no: "01",
-    title: "NEO KABUKICHO 2126",
-    synopsis: "A story of a future co-created by AI and humans. An experimental short exploring memory boundaries.",
-    date: "2026.03.10",
-    thumbnail: "/nexus_protocol_thumb.png",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 3,
-    no: "03",
-    title: "Digital Frontier",
-    synopsis: "Collaboration with Tech Corp. Questioning the ethics of mind uploading.",
-    date: "2026.03.15",
-    thumbnail: "/corporate_work_1.png",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 4,
-    no: "04",
-    title: "Cyber Genesis",
-    synopsis: "An algorithm with a will breaks the balance in the financial city of Shibuya.",
-    date: "2026.04.01",
-    thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 5,
-    no: "05",
-    title: "Neon Pulse",
-    synopsis: "Tie-up with a next-gen fashion brand. A story of clothing that wears emotions.",
-    date: "2026.04.20",
-    thumbnail: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 6,
-    no: "06",
-    title: "Silicon Soul",
-    synopsis: "A fleeting moment of love perceived by an autonomous vehicle. Mapping the future of mobility.",
-    date: "2026.05.05",
-    thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 7,
-    no: "07",
-    title: "Global Nexus",
-    synopsis: "Beyond the AI-managed logistics network, a story of a forgotten village.",
-    date: "2026.05.25",
-    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  },
-  {
-    id: 8,
-    no: "08",
-    title: "Eco Pulse",
-    synopsis: "Partnered with Energy Solutions. The perspective of an AI committed to planetary restoration.",
-    date: "2026.06.10",
-    thumbnail: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072&auto=format&fit=crop",
-    youtubeId: "placeholder"
-  }
-];
 
 const Nav = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -254,11 +93,33 @@ const Footer = () => {
 
 export default function Home() {
   const { t, language } = useLanguage();
-  const works = language === 'ja' ? mockWorksJa : mockWorksEn;
-  const siteNews = language === 'ja' ? mockSiteNewsJa : mockSiteNewsEn;
 
   const containerRef = useRef(null);
   const [activeVideo, setActiveVideo] = useState(0);
+  const [works, setWorks] = useState<any[]>([]);
+  const [siteNews, setSiteNews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [worksRes, newsRes] = await Promise.all([
+          fetch('/api/works'),
+          fetch('/api/news')
+        ]);
+        if (worksRes.ok && newsRes.ok) {
+          setWorks(await worksRes.json());
+          setSiteNews(await newsRes.json());
+        }
+      } catch (e) {
+        console.error("Failed to load data", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   const videoFiles = [
     { src: "/hero-background.mp4", start: 0 },
     { src: "/drone-neokabukicho.mp4", start: 1 } // Skip first second as per user request
@@ -424,15 +285,15 @@ export default function Home() {
             >
               <div className="mt-6 flex-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
                 {siteNews.map((news) => (
-                  <div key={news.id} className="group/news border-b border-white/5 pb-6 last:border-0 cursor-pointer">
+                  <Link href={`/news/${news.id}`} key={news.id} className="group/news border-b border-white/5 pb-6 last:border-0 cursor-pointer block">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{news.date}</span>
                       <span className="text-[8px] uppercase font-black text-accent border border-accent/20 px-2 py-0.5 rounded tracking-[0.2em]">{news.type}</span>
                     </div>
                     <p className="text-base font-bold text-gray-300 group-hover/news:text-white transition-colors leading-relaxed line-clamp-2">
-                      {news.title}
+                      {language === 'ja' ? news.titleJa : news.titleEn}
                     </p>
-                  </div>
+                  </Link>
                 ))}
                 <div className="mt-auto pt-4">
                   <Link href="#" className="text-[11px] font-black uppercase text-gray-500 hover:text-accent transition-colors flex items-center gap-2 tracking-[0.3em]">
@@ -513,12 +374,12 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {works.map((work) => (
+              {works.slice(0, 4).map((work) => (
                 <div key={work.id} className="group flex flex-col rounded-2xl overflow-hidden glass border-white/5 transition-all hover:glow-md hover:border-accent/10">
                   <Link href="/works" className="relative aspect-video overflow-hidden">
                     <img
                       src={work.thumbnail}
-                      alt={work.title}
+                      alt={language === 'ja' ? work.titleJa : work.titleEn}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center backdrop-blur-[3px]">
@@ -538,10 +399,10 @@ export default function Home() {
                       </span>
                     </div>
                     <h3 className="text-2xl font-black text-white mb-4 group-hover:text-accent transition-colors leading-[1.3] uppercase py-2 px-1">
-                      {work.title}
+                      {language === 'ja' ? work.titleJa : work.titleEn}
                     </h3>
                     <p className="text-sm text-gray-400 mb-8 leading-relaxed font-medium line-clamp-3">
-                      {work.synopsis}
+                      {language === 'ja' ? work.synopsisJa : work.synopsisEn}
                     </p>
                     <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
                       <span className="text-[9px] text-gray-500 uppercase tracking-[0.3em] font-black italic">ALL CINEMA</span>

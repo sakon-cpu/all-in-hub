@@ -5,141 +5,28 @@ import { ArrowLeft, Play, Calendar, Film, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
-const mockWorksJa = [
-    {
-        id: 1,
-        no: "01",
-        title: "ネオ歌舞伎町2126",
-        synopsis: "AIと人間が共創する未来の物語。記憶の境界線を探る実験的短編。",
-        date: "2026.03.10",
-        thumbnail: "/nexus_protocol_thumb.png",
-        category: "Sci-Fi / Drama"
-    },
-    {
-        id: 3,
-        no: "03",
-        title: "電脳の境界線：フロンティア",
-        synopsis: "大手テック企業とのコラボレーション。マインドアップロードの法理を問う。",
-        date: "2026.03.15",
-        thumbnail: "/corporate_work_1.png",
-        category: "Corporate / Sci-Fi"
-    },
-    {
-        id: 4,
-        no: "04",
-        title: "起源のサイバネティクス",
-        synopsis: "金融都市シブヤを舞台に、意思を持つアルゴリズムが均衡を破る。",
-        date: "2026.04.01",
-        thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
-        category: "Thriller / Tech"
-    },
-    {
-        id: 5,
-        no: "05",
-        title: "Neon Pulse: 感情の残滓",
-        synopsis: "次世代ファッションブランドとのタイアップ。感情を纏う服の物語。",
-        date: "2026.04.20",
-        thumbnail: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
-        category: "Fashion / Art"
-    },
-    {
-        id: 6,
-        no: "06",
-        title: "シリコン・ソウル：自律の旅",
-        synopsis: "自動運転車が知覚した一瞬の愛。モビリティの未来を描く。",
-        date: "2026.05.05",
-        thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop",
-        category: "Road Movie / AI"
-    },
-    {
-        id: 7,
-        no: "07",
-        title: "グローバル・ネクサス",
-        synopsis: "AIが管理する物流ネットワークの先にあった、忘れられた村の物語。",
-        date: "2026.05.25",
-        thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-        category: "Documentary / Future"
-    },
-    {
-        id: 8,
-        no: "08",
-        title: "再生の脈動：プラネット・コア",
-        synopsis: "エネルギーソリューション企業提携。地球再生を誓うAIの視点。",
-        date: "2026.06.10",
-        thumbnail: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072&auto=format&fit=crop",
-        category: "Eco / Vision"
-    }
-];
-
-const mockWorksEn = [
-    {
-        id: 1,
-        no: "01",
-        title: "NEO KABUKICHO 2126",
-        synopsis: "A story of a future co-created by AI and humans. An experimental short exploring memory boundaries.",
-        date: "2026.03.10",
-        thumbnail: "/nexus_protocol_thumb.png",
-        category: "Sci-Fi / Drama"
-    },
-    {
-        id: 3,
-        no: "03",
-        title: "Digital Frontier",
-        synopsis: "Collaboration with Tech Corp. Questioning the ethics of mind uploading.",
-        date: "2026.03.15",
-        thumbnail: "/corporate_work_1.png",
-        category: "Corporate / Sci-Fi"
-    },
-    {
-        id: 4,
-        no: "04",
-        title: "Cyber Genesis",
-        synopsis: "An algorithm with a will breaks the balance in the financial city of Shibuya.",
-        date: "2026.04.01",
-        thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
-        category: "Thriller / Tech"
-    },
-    {
-        id: 5,
-        no: "05",
-        title: "Neon Pulse",
-        synopsis: "Tie-up with a next-gen fashion brand. A story of clothing that wears emotions.",
-        date: "2026.04.20",
-        thumbnail: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
-        category: "Fashion / Art"
-    },
-    {
-        id: 6,
-        no: "06",
-        title: "Silicon Soul",
-        synopsis: "A fleeting moment of love perceived by an autonomous vehicle. Mapping the future of mobility.",
-        date: "2026.05.05",
-        thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop",
-        category: "Road Movie / AI"
-    },
-    {
-        id: 7,
-        no: "07",
-        title: "Global Nexus",
-        synopsis: "Beyond the AI-managed logistics network, a story of a forgotten village.",
-        date: "2026.05.25",
-        thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-        category: "Documentary / Future"
-    },
-    {
-        id: 8,
-        no: "08",
-        title: "Eco Pulse",
-        synopsis: "Partnered with Energy Solutions. The perspective of an AI committed to planetary restoration.",
-        date: "2026.06.10",
-        thumbnail: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072&auto=format&fit=crop",
-        category: "Eco / Vision"
-    }
-];
+import { useState, useEffect } from "react";
 
 export default function WorksPage() {
     const { t, language } = useLanguage();
-    const works = language === "ja" ? mockWorksJa : mockWorksEn;
+    const [works, setWorks] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadWorks() {
+            try {
+                const res = await fetch('/api/works');
+                if (res.ok) {
+                    setWorks(await res.json());
+                }
+            } catch (e) {
+                console.error("Failed to load works", e);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadWorks();
+    }, []);
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -197,7 +84,7 @@ export default function WorksPage() {
                                 <div className="relative aspect-video overflow-hidden">
                                     <img
                                         src={work.thumbnail}
-                                        alt={work.title}
+                                        alt={language === 'ja' ? work.titleJa : work.titleEn}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center backdrop-blur-[2px]">
@@ -205,11 +92,14 @@ export default function WorksPage() {
                                             <Play className="w-8 h-8 fill-current translate-x-1" />
                                         </div>
                                     </div>
-                                    <div className="absolute top-4 left-4">
-                                        <span className="px-4 py-1.5 rounded-full glass border border-white/10 text-[10px] font-black tracking-widest uppercase">
-                                            {work.category}
-                                        </span>
-                                    </div>
+                                    {/* Optional category display if it existed in the work data */}
+                                    {work.category && (
+                                        <div className="absolute top-4 left-4">
+                                            <span className="px-4 py-1.5 rounded-full glass border border-white/10 text-[10px] font-black tracking-widest uppercase">
+                                                {work.category}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="p-8 flex-1 flex flex-col">
@@ -222,10 +112,10 @@ export default function WorksPage() {
                                     </div>
                                     {/* Local padding and leading for work titles */}
                                     <h3 className="text-xl font-black text-white mb-4 group-hover:text-accent transition-colors leading-[1.3] uppercase py-2 px-1">
-                                        {work.title}
+                                        {language === 'ja' ? work.titleJa : work.titleEn}
                                     </h3>
                                     <p className="text-xs text-gray-400 mb-6 leading-relaxed font-medium line-clamp-2 italic">
-                                        {work.synopsis}
+                                        {language === 'ja' ? work.synopsisJa : work.synopsisEn}
                                     </p>
                                     <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-end">
                                         <ArrowUpRight className="w-5 h-5 text-gray-600 group-hover:text-white group-hover:scale-125 transition-all" />

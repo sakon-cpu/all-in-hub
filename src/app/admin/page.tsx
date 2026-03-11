@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, AlertTriangle, Image as ImageIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { Work, NewsItem, Note } from '@/lib/types';
 
@@ -28,12 +28,74 @@ function Modal({ title, onClose, onSave, children }: { title: string; onClose: (
 }
 
 function Field({ label, value, onChange, multiline = false, placeholder = '' }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string }) {
+    const handleInsert = (text: string) => {
+        onChange(value + text);
+    };
+
     return (
         <div>
             <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">{label}</label>
+            {multiline && <MarkdownToolbar onInsert={handleInsert} />}
             {multiline
-                ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={4} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm resize-none" />
+                ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={8} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm resize-y" />
                 : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm" />}
+        </div>
+    );
+}
+
+function MarkdownToolbar({ onInsert }: { onInsert: (text: string) => void }) {
+    const handleImage = async () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = async (e: any) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.url) {
+                    onInsert(`\n\n![${file.name}](${data.url})\n\n`);
+                }
+            } catch (err) {
+                console.error("Upload failed", err);
+                alert("アップロードに失敗しました");
+            }
+        };
+        input.click();
+    };
+
+    const handleVideo = () => {
+        const url = prompt("YouTubeのURLを入力してください:");
+        if (!url) return;
+
+        let embedUrl = url;
+        if (url.includes('youtube.com/watch?v=')) {
+            const videoId = url.split('v=')[1].split('&')[0];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        } else if (url.includes('youtu.be/')) {
+            const videoId = url.split('youtu.be/')[1].split('?')[0];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        const iframe = `\n\n<div style="width: 100%; aspect-ratio: 16/9; margin: 2rem 0; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);"><iframe src="${embedUrl}" title="YouTube" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; preserve-pitch; picture-in-picture" allowfullscreen style="width: 100%; height: 100%;"></iframe></div>\n\n`;
+        onInsert(iframe);
+    };
+
+    return (
+        <div className="flex items-center gap-2 mb-2 p-1.5 bg-black/50 rounded-lg w-max border border-white/10 backdrop-blur-md">
+            <button type="button" onClick={handleImage} className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400 hover:text-white" title="写真をアップロード">
+                <ImageIcon className="w-4 h-4" />
+                <span className="text-xs font-bold tracking-widest">写真</span>
+            </button>
+            <div className="w-[1px] h-4 bg-white/10" />
+            <button type="button" onClick={handleVideo} className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400 hover:text-white" title="YouTube動画を埋め込む">
+                <Film className="w-4 h-4" />
+                <span className="text-xs font-bold tracking-widest">動画</span>
+            </button>
         </div>
     );
 }
@@ -162,7 +224,7 @@ function NewsTab() {
     return (
         <div>
             <div className="flex justify-end mb-6">
-                <button onClick={() => { setEditing({ id: '', date: '', titleJa: '', titleEn: '', type: 'info' }); setIsNew(true); }} className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">
+                <button onClick={() => { setEditing({ id: '', date: '', titleJa: '', titleEn: '', type: 'info', contentJa: '', contentEn: '' }); setIsNew(true); }} className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">
                     <Plus className="w-4 h-4" />ニュースを追加
                 </button>
             </div>
@@ -189,6 +251,8 @@ function NewsTab() {
                     </div>
                     <Field label="タイトル（日本語）" value={editing.titleJa} onChange={v => setEditing({ ...editing, titleJa: v })} />
                     <Field label="タイトル（英語）" value={editing.titleEn} onChange={v => setEditing({ ...editing, titleEn: v })} />
+                    <Field label="本文（日本語 / Markdown）" value={editing.contentJa || ''} onChange={v => setEditing({ ...editing, contentJa: v })} multiline placeholder="Markdown記法が使えます..." />
+                    <Field label="本文（英語 / Markdown）" value={editing.contentEn || ''} onChange={v => setEditing({ ...editing, contentEn: v })} multiline placeholder="Markdown is supported..." />
                 </Modal>
             )}
         </div>
@@ -278,8 +342,6 @@ export default function AdminPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('works');
-    const [seeding, setSeeding] = useState(false);
-    const [seedDone, setSeedDone] = useState(false);
     const router = useRouter();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -297,13 +359,6 @@ export default function AdminPage() {
         } else {
             setError(true);
         }
-    };
-
-    const handleSeed = async () => {
-        setSeeding(true);
-        await fetch('/api/seed', { method: 'POST' });
-        setSeeding(false);
-        setSeedDone(true);
     };
 
     const tabs = [
@@ -365,20 +420,6 @@ export default function AdminPage() {
                     <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">コンテンツ管理</h1>
                     <p className="text-gray-500 text-sm">サイトのコンテンツを編集・追加・削除できます。変更はリアルタイムでサイトに反映されます。</p>
                 </div>
-
-                {/* Seed Banner */}
-                {!seedDone && (
-                    <div className="mb-8 p-6 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex items-start gap-4">
-                        <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                            <p className="font-black text-yellow-300 text-sm uppercase tracking-widest mb-1">初回セットアップ</p>
-                            <p className="text-yellow-200/70 text-xs mb-3">初回のみ「初期データを読み込む」を押してください。既存のモックデータがデータベースに登録されます。</p>
-                            <button onClick={handleSeed} disabled={seeding} className="px-6 py-2 bg-yellow-500/20 border border-yellow-500/30 rounded-xl text-yellow-300 font-black text-xs uppercase tracking-widest hover:bg-yellow-500/30 transition-all">
-                                {seeding ? '処理中...' : '初期データを読み込む'}
-                            </button>
-                        </div>
-                    </div>
-                )}
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-8 p-1.5 glass border border-white/5 rounded-2xl w-fit">
