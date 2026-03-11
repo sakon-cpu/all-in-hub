@@ -6,7 +6,7 @@ export function proxy(request: NextRequest) {
 
     const publicPaths = [
         '/login', '/admin',
-        '/api/auth', '/api/admin-auth', '/api/works', '/api/news', '/api/notes', '/api/seed', '/api/upload',
+        '/api/auth', '/api/admin-auth', '/api/works', '/api/news', '/api/notes', '/api/seed',
         '/_next', '/favicon.ico', '/hero-background.mp4', '/drone-neokabukicho.mp4', '/nexus_protocol_thumb.png', '/corporate_work_1.png', '/uploads'
     ];
 

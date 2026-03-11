@@ -44,28 +44,28 @@ function Field({ label, value, onChange, multiline = false, placeholder = '' }: 
 }
 
 function MarkdownToolbar({ onInsert }: { onInsert: (text: string) => void }) {
-    const handleImage = async () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = async (e: any) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append('file', file);
+    const handleImage = () => {
+        const url = prompt("Googleドライブの共有リンク（または画像のURL）を入力してください:");
+        if (!url) return;
 
-            try {
-                const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.url) {
-                    onInsert(`\n\n![${file.name}](${data.url})\n\n`);
-                }
-            } catch (err) {
-                console.error("Upload failed", err);
-                alert("アップロードに失敗しました");
-            }
-        };
-        input.click();
+        let fileId = "";
+        const matchFileD = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        const matchId = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+
+        if (matchFileD) {
+            fileId = matchFileD[1];
+        } else if (matchId) {
+            fileId = matchId[1];
+        }
+
+        if (fileId) {
+            const embedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            onInsert(`\n\n![Drive Image](${embedUrl})\n\n`);
+        } else if (url.startsWith('http')) {
+            onInsert(`\n\n![Image](${url})\n\n`);
+        } else {
+            alert("有効なURLが認識できませんでした。");
+        }
     };
 
     const handleVideo = () => {
