@@ -45,8 +45,13 @@ function Field({ label, value, onChange, multiline = false, placeholder = '' }: 
 
 function MarkdownToolbar({ onInsert }: { onInsert: (text: string) => void }) {
     const handleImage = () => {
-        const url = prompt("Googleドライブの共有リンク（または画像のURL）を入力してください:");
+        const url = prompt("Googleドライブの画像の共有リンクを入力してください:\n（※フォルダではなく、必ず「画像ファイル」のリンクを貼ってください）");
         if (!url) return;
+
+        if (url.includes('/folders/')) {
+            alert("エラー：フォルダのリンクが入力されました！\nフォルダではなく、中に入っている「画像ファイル」を右クリックして「リンクのコピー」を行ってください。");
+            return;
+        }
 
         let fileId = "";
         const matchFileD = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -59,8 +64,9 @@ function MarkdownToolbar({ onInsert }: { onInsert: (text: string) => void }) {
         }
 
         if (fileId) {
-            const embedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-            onInsert(`\n\n![Drive Image](${embedUrl})\n\n`);
+            // thumbnail API allows safe hotlinking of Google Drive images without CORS/Auth blocks
+            const embedUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+            onInsert(`\n\n![Google Drive Image](${embedUrl})\n\n`);
         } else if (url.startsWith('http')) {
             onInsert(`\n\n![Image](${url})\n\n`);
         } else {
