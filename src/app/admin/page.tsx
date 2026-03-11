@@ -124,7 +124,26 @@ function WorksTab() {
     const [editing, setEditing] = useState<Work | null>(null);
     const [isNew, setIsNew] = useState(false);
 
-    const emptyWork: Omit<Work, 'id'> = { no: '', titleJa: '', titleEn: '', synopsisJa: '', synopsisEn: '', thumbnail: '', date: new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') };
+    const emptyWork: Omit<Work, 'id'> = { no: '', titleJa: '', titleEn: '', synopsisJa: '', synopsisEn: '', thumbnail: '', youtubeId: '', date: new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') };
+
+    const handleYoutubeChange = (url: string) => {
+        if (!editing) return;
+        let videoId = "";
+        try {
+            if (url.includes('v=')) {
+                videoId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            }
+        } catch (e) { }
+
+        if (videoId) {
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            setEditing({ ...editing, youtubeId: url, thumbnail: thumbnailUrl });
+        } else {
+            setEditing({ ...editing, youtubeId: url });
+        }
+    };
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -184,6 +203,7 @@ function WorksTab() {
                     <Field label="タイトル（英語）" value={editing.titleEn} onChange={v => setEditing({ ...editing, titleEn: v })} />
                     <Field label="あらすじ（日本語）" value={editing.synopsisJa} onChange={v => setEditing({ ...editing, synopsisJa: v })} multiline />
                     <Field label="あらすじ（英語）" value={editing.synopsisEn} onChange={v => setEditing({ ...editing, synopsisEn: v })} multiline />
+                    <Field label="YouTubeリンク (入力でサムネイル自動取得)" value={editing.youtubeId || ''} onChange={handleYoutubeChange} placeholder="https://youtube.com/watch?v=..." />
                     <Field label="サムネイルURL" value={editing.thumbnail} onChange={v => setEditing({ ...editing, thumbnail: v })} placeholder="https://example.com/image.jpg" />
                 </Modal>
             )}
