@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import type { Work, NewsItem, Note } from '@/lib/kv';
+import type { Work, NewsItem, Note } from '@/lib/types';
 
 type Tab = 'works' | 'news' | 'notes';
 

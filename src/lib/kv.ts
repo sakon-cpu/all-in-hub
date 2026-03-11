@@ -1,8 +1,7 @@
 import { Redis } from '@upstash/redis';
+import type { Work, NewsItem, Note } from './types';
 
-// This client connects using environment variables:
-// UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
-// These are automatically set when you add the Upstash Redis integration in Vercel.
+export type { Work, NewsItem, Note };
 
 let redis: Redis | null = null;
 
@@ -52,39 +51,4 @@ export async function getNotes(): Promise<Note[]> {
 export async function setNotes(notes: Note[]): Promise<void> {
     const db = getRedis();
     await db.set('notes', notes);
-}
-
-// --- Type Definitions ---
-export interface Work {
-    id: string;
-    no: string;
-    titleJa: string;
-    titleEn: string;
-    synopsisJa: string;
-    synopsisEn: string;
-    thumbnail: string;
-    date: string;
-    youtubeId?: string;
-}
-
-export interface NewsItem {
-    id: string;
-    date: string;
-    titleJa: string;
-    titleEn: string;
-    type: 'info' | 'update' | 'recruit';
-}
-
-export interface Note {
-    id: string;
-    slug: string;
-    titleJa: string;
-    titleEn: string;
-    excerptJa: string;
-    excerptEn: string;
-    contentJa: string;
-    contentEn: string;
-    author: string;
-    category: string;
-    date: string;
 }
