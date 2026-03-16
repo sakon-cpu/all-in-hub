@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff, ArrowRight, Film, Newspaper, ArrowLeft, Shield } from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowRight, Film, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function PreviewPage() {
-    const { t } = useLanguage();
+    const { /* t */ } = useLanguage();
     const [password, setPassword] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -82,69 +82,66 @@ export default function PreviewPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-8">
-            <div className="max-w-4xl mx-auto pt-20">
-                <header className="mb-16">
+        <div className="min-h-screen bg-black text-white p-6 md:p-12 flex items-center justify-center">
+            <div className="max-w-6xl w-full">
+                <header className="mb-12 md:mb-20 text-center md:text-left">
                     <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-white mb-8 transition-colors text-xs font-black uppercase tracking-widest">
                         <ArrowLeft className="w-4 h-4" />
-                        HUBトップへ
+                        サイトトップへ
                     </Link>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-6">
-                        PREVIEW <br /> <span className="text-accent">DASHBOARD</span>
+                    <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase mb-6 leading-none">
+                        SELECT <br /> <span className="text-accent underline decoration-accent/30 underline-offset-8">PORTAL</span>
                     </h1>
-                    <p className="text-xl text-gray-400 font-bold italic leading-relaxed">
-                        社員メンバー限定の先行公開ページです。制作中の作品一覧やブログ記事を確認できます。
+                    <p className="text-lg md:text-xl text-gray-400 font-bold italic leading-relaxed max-w-2xl">
+                        ALL CINEMA関係者専用ポータル。閲覧、または管理のいずれかを選択してください。
                     </p>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Link href="/works" className="group p-10 glass rounded-3xl border border-white/5 hover:border-accent/30 transition-all flex flex-col h-full">
-                        <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-8 border border-accent/20 group-hover:bg-accent group-hover:text-white transition-all">
-                            <Film className="w-8 h-8" />
-                        </div>
-                        <h2 className="text-3xl font-black mb-4 uppercase">WORKS ARCHIVE</h2>
-                        <p className="text-gray-400 font-medium mb-8 flex-1">
-                            これまでに制作した全作品のアーカイブ、および詳細情報を確認できます。
-                        </p>
-                        <div className="flex items-center gap-2 text-accent font-black text-xs tracking-[0.3em] uppercase group-hover:translate-x-2 transition-transform">
-                            VIEW WORKS <ArrowRight className="w-4 h-4" />
-                        </div>
-                    </Link>
-
-                    <Link href="/note" className="group p-10 glass rounded-3xl border border-white/5 hover:border-accent/30 transition-all flex flex-col h-full">
-                        <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-8 border border-accent/20 group-hover:bg-accent group-hover:text-white transition-all">
-                            <Newspaper className="w-8 h-8" />
-                        </div>
-                        <h2 className="text-3xl font-black mb-4 uppercase">BLOG & NOTES</h2>
-                        <p className="text-gray-400 font-medium mb-8 flex-1">
-                            制作の裏側や、AI技術に関する考察を綴った記事一覧を確認できます。
-                        </p>
-                        <div className="flex items-center gap-2 text-accent font-black text-xs tracking-[0.3em] uppercase group-hover:translate-x-2 transition-transform">
-                            VIEW NOTES <ArrowRight className="w-4 h-4" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                    {/* HUB ACCESS */}
+                    <Link href="/" className="group relative overflow-hidden p-1 bg-white/5 hover:bg-white/10 rounded-[2.5rem] transition-all duration-500 border border-white/5 hover:border-accent/30">
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative p-10 md:p-14 h-full flex flex-col min-h-[400px]">
+                            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-10 border border-white/10 group-hover:scale-110 group-hover:bg-accent group-hover:border-accent transition-all duration-500">
+                                <Film className="w-8 h-8 text-white" />
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter">ALL CINEMA <br /><span className="text-accent">HUB</span></h2>
+                            <p className="text-gray-400 font-bold text-lg mb-12 flex-1 leading-relaxed">
+                                一般公開されている本番サイトの全ページを確認します。最新のアニメーションやビジュアル体験をチェック。
+                            </p>
+                            <div className="flex items-center gap-3 text-white font-black text-sm tracking-[0.2em] uppercase group-hover:gap-5 transition-all">
+                                サイトを閲覧する <ArrowRight className="w-5 h-5 text-accent" />
+                            </div>
                         </div>
                     </Link>
 
-                    <Link href="/admin" className="group p-10 glass rounded-3xl border border-white/5 hover:border-accent/30 transition-all flex flex-col h-full md:col-span-2">
-                        <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-8 border border-accent/20 group-hover:bg-accent group-hover:text-white transition-all">
-                            <Shield className="w-8 h-8" />
-                        </div>
-                        <h2 className="text-3xl font-black mb-4 uppercase">ADMIN DASHBOARD</h2>
-                        <p className="text-gray-400 font-medium mb-8 flex-1">
-                            作品、ニュース、制作ノートの投稿や管理、編集作業を行うことができます。
-                        </p>
-                        <div className="flex items-center gap-2 text-accent font-black text-xs tracking-[0.3em] uppercase group-hover:translate-x-2 transition-transform">
-                            OPEN DASHBOARD <ArrowRight className="w-4 h-4" />
+                    {/* ADMIN ACCESS */}
+                    <Link href="/admin" className="group relative overflow-hidden p-1 bg-white/5 hover:bg-white/10 rounded-[2.5rem] transition-all duration-500 border border-white/5 hover:border-accent/30">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-neutral-800/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative p-10 md:p-14 h-full flex flex-col min-h-[400px]">
+                            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-10 border border-white/10 group-hover:scale-110 group-hover:bg-white group-hover:border-white transition-all duration-500">
+                                <Shield className="w-8 h-8 text-white group-hover:text-black" />
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter">PLATFORM <br /><span className="text-gray-400">ADMIN</span></h2>
+                            <p className="text-gray-400 font-bold text-lg mb-12 flex-1 leading-relaxed">
+                                作品、ニュース、制作ノートの投稿・管理。プラットフォームの全コンテンツをコントロール。
+                            </p>
+                            <div className="flex items-center gap-3 text-white font-black text-sm tracking-[0.2em] uppercase group-hover:gap-5 transition-all">
+                                管理画面を開く <ArrowRight className="w-5 h-5 text-gray-500" />
+                            </div>
                         </div>
                     </Link>
                 </div>
 
-                <div className="mt-20 p-8 rounded-3xl border border-white/5 bg-white/5">
-                    <h3 className="text-xs font-black text-gray-500 tracking-[0.5em] uppercase mb-4">Sharing Info</h3>
-                    <p className="text-sm text-gray-400 leading-relaxed font-medium">
-                        このページおよび各詳細ページは、URLを直接知っているメンバーのみが閲覧することを想定しています。<br />
-                        共有する際は、このURL（`/creative-preview`）とパスワード（`allhero2026`）をセットで伝えてください。
+                <footer className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-[10px] font-black text-gray-600 tracking-[0.5em] uppercase">
+                        Confidential Access · Internal Use Only
                     </p>
-                </div>
+                    <div className="flex gap-6">
+                        <Link href="/works" className="text-[10px] font-black text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Quick View: Works</Link>
+                        <Link href="/note" className="text-[10px] font-black text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Quick View: Notes</Link>
+                    </div>
+                </footer>
             </div>
         </div>
     );
