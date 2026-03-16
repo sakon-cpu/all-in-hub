@@ -1,17 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowLeft, Play, Calendar, Film, ArrowUpRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Play, Calendar, Film, ArrowUpRight, X, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
-
 import { useState, useEffect } from "react";
+import type { Work } from "@/lib/types";
 
 export default function WorksPage() {
     const { t, language } = useLanguage();
-    const [works, setWorks] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [works, setWorks] = useState<Work[]>([]);
     const [authorized, setAuthorized] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
     useEffect(() => {
         // 簡単な認証ガード（localhostではスキップ）
@@ -30,14 +30,33 @@ export default function WorksPage() {
                 if (res.ok) {
                     setWorks(await res.json());
                 }
-            } catch (e) {
-                console.error("Failed to load works", e);
-            } finally {
-                setLoading(false);
+            } catch (err) {
+                console.error("Failed to load works", err);
             }
         }
         loadWorks();
     }, []);
+
+    const openVideo = (youtubeUrl: string | undefined) => {
+        if (!youtubeUrl) return;
+        let videoId = "";
+        try {
+            if (youtubeUrl.includes('v=')) {
+                videoId = youtubeUrl.split('v=')[1].split('&')[0];
+            } else if (youtubeUrl.includes('youtu.be/')) {
+                videoId = youtubeUrl.split('youtu.be/')[1].split('?')[0];
+            } else if (youtubeUrl.includes('embed/')) {
+                videoId = youtubeUrl.split('embed/')[1].split('?')[0];
+            }
+        } catch (e) {}
+        
+        if (videoId) {
+            setSelectedVideo(videoId);
+        } else if (youtubeUrl !== "placeholder") {
+            // もしID形式でなければそのままリンクとして開くなどのフォールバック
+            window.open(youtubeUrl, '_blank');
+        }
+    };
 
     if (!authorized) return <div className="min-h-screen bg-black" />;
 
@@ -71,7 +90,6 @@ export default function WorksPage() {
                                     Archive of Creations
                                 </span>
                             </div>
-                            {/* Vertical padding added to prevent cropping */}
                             <h2 className="text-4xl md:text-7xl font-black text-white tracking-tight uppercase mb-2">
                                 WORKS
                             </h2>
@@ -92,7 +110,8 @@ export default function WorksPage() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="group relative flex flex-col rounded-2xl overflow-hidden glass border border-white/5 transition-all hover:glow-md hover:border-accent/10"
+                                className="group relative flex flex-col rounded-2xl overflow-hidden glass border border-white/5 transition-all hover:glow-md hover:border-accent/10 cursor-pointer"
+                                onClick={() => openVideo(work.youtubeId)}
                             >
                                 <div className="relative aspect-video overflow-hidden">
                                     <img
@@ -105,7 +124,6 @@ export default function WorksPage() {
                                             <Play className="w-8 h-8 fill-current translate-x-1" />
                                         </div>
                                     </div>
-                                    {/* Optional category display if it existed in the work data */}
                                     {work.category && (
                                         <div className="absolute top-4 left-4">
                                             <span className="px-4 py-1.5 rounded-full glass border border-white/10 text-[10px] font-black tracking-widest uppercase">
@@ -123,7 +141,6 @@ export default function WorksPage() {
                                             {work.date}
                                         </span>
                                     </div>
-                                    {/* Local padding and leading for work titles */}
                                     <h3 className="text-xl font-black text-white mb-4 group-hover:text-accent transition-colors leading-[1.3] uppercase py-2 px-1">
                                         {language === 'ja' ? work.titleJa : work.titleEn}
                                     </h3>
@@ -139,6 +156,55 @@ export default function WorksPage() {
                     </div>
                 </div>
             </main>
+
+            {/* Video Modal */}
+            <AnimatePresence>
+                {selectedVideo && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-10"
+                        onClick={() => setSelectedVideo(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <iframe
+                                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="w-full h-full"
+                            ></iframe>
+                            
+                            {/* Controls */}
+                            <div className="absolute top-4 right-4 flex gap-2">
+                                <a 
+                                    href={`https://www.youtube.com/watch?v=${selectedVideo}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md transition-colors border border-white/10"
+                                    title="YouTubeで直接見る"
+                                >
+                                    <ExternalLink className="w-4 h-4 text-white" />
+                                </a>
+                                <button
+                                    onClick={() => setSelectedVideo(null)}
+                                    className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:rotate-90"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

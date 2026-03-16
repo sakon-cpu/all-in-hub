@@ -11,6 +11,7 @@ export interface Work {
     thumbnail: string;
     date: string;
     youtubeId?: string;
+    category?: string;
 }
 
 export interface NewsItem {
