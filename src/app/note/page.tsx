@@ -11,8 +11,17 @@ export default function NotePage() {
     const { language, t } = useLanguage();
     const [notes, setNotes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
+        // 簡単な認証ガード
+        const auth = localStorage.getItem("temp_auth");
+        if (auth !== "true") {
+            window.location.href = "/creative-preview";
+            return;
+        }
+        setAuthorized(true);
+
         async function loadNotes() {
             try {
                 const res = await fetch('/api/notes');
@@ -27,6 +36,8 @@ export default function NotePage() {
         }
         loadNotes();
     }, []);
+
+    if (!authorized) return <div className="min-h-screen bg-black" />;
 
     return (
         <div className="min-h-screen pt-32 pb-20">

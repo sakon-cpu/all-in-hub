@@ -11,8 +11,17 @@ export default function WorksPage() {
     const { t, language } = useLanguage();
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
+        // 簡単な認証ガード
+        const auth = localStorage.getItem("temp_auth");
+        if (auth !== "true") {
+            window.location.href = "/creative-preview";
+            return;
+        }
+        setAuthorized(true);
+
         async function loadWorks() {
             try {
                 const res = await fetch('/api/works');
@@ -27,6 +36,8 @@ export default function WorksPage() {
         }
         loadWorks();
     }, []);
+
+    if (!authorized) return <div className="min-h-screen bg-black" />;
 
     return (
         <div className="min-h-screen bg-black text-white">
