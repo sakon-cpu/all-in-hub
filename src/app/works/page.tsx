@@ -14,11 +14,13 @@ export default function WorksPage() {
     const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-        // 簡単な認証ガード
-        const auth = localStorage.getItem("temp_auth");
-        if (auth !== "true") {
-            window.location.href = "/creative-preview";
-            return;
+        // 簡単な認証ガード（localhostではスキップ）
+        if (window.location.hostname !== "localhost") {
+            const auth = localStorage.getItem("temp_auth");
+            if (auth !== "true") {
+                window.location.href = "/creative-preview";
+                return;
+            }
         }
         setAuthorized(true);
 
