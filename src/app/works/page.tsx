@@ -37,24 +37,36 @@ export default function WorksPage() {
         loadWorks();
     }, []);
 
-    const openVideo = (youtubeUrl: string | undefined) => {
-        if (!youtubeUrl) return;
-        let videoId = "";
-        try {
-            if (youtubeUrl.includes('v=')) {
-                videoId = youtubeUrl.split('v=')[1].split('&')[0];
-            } else if (youtubeUrl.includes('youtu.be/')) {
-                videoId = youtubeUrl.split('youtu.be/')[1].split('?')[0];
-            } else if (youtubeUrl.includes('embed/')) {
-                videoId = youtubeUrl.split('embed/')[1].split('?')[0];
-            }
-        } catch (e) {}
+    const openVideo = (url: string | undefined) => {
+        if (!url || url === "placeholder" || url === "") return;
         
-        if (videoId) {
+        let videoId: string | null = null;
+        
+        // 1. YouTube標準の正規表現でID抽出を試行
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        
+        if (match && match[2].length === 11) {
+            videoId = match[2];
+        } else if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
+            // 2. 既にIDのみが渡されている場合
+            videoId = url;
+        } else {
+            // 3. 手動パース（予備）
+            try {
+                if (url.includes('v=')) {
+                    videoId = url.split('v=')[1].split('&')[0];
+                } else if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                }
+            } catch (e) {}
+        }
+        
+        if (videoId && videoId.length === 11) {
             setSelectedVideo(videoId);
-        } else if (youtubeUrl !== "placeholder") {
-            // もしID形式でなければそのままリンクとして開くなどのフォールバック
-            window.open(youtubeUrl, '_blank');
+        } else {
+            // IDが特定できない場合は新しいタブでURLを直接開く
+            window.open(url, '_blank');
         }
     };
 
