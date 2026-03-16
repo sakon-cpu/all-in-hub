@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff, ArrowRight, Film, Newspaper, ArrowLeft } from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowRight, Film, Newspaper, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -121,6 +121,19 @@ export default function PreviewPage() {
                         </p>
                         <div className="flex items-center gap-2 text-accent font-black text-xs tracking-[0.3em] uppercase group-hover:translate-x-2 transition-transform">
                             VIEW NOTES <ArrowRight className="w-4 h-4" />
+                        </div>
+                    </Link>
+
+                    <Link href="/admin" className="group p-10 glass rounded-3xl border border-white/5 hover:border-accent/30 transition-all flex flex-col h-full md:col-span-2">
+                        <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-8 border border-accent/20 group-hover:bg-accent group-hover:text-white transition-all">
+                            <Shield className="w-8 h-8" />
+                        </div>
+                        <h2 className="text-3xl font-black mb-4 uppercase">ADMIN DASHBOARD</h2>
+                        <p className="text-gray-400 font-medium mb-8 flex-1">
+                            作品、ニュース、制作ノートの投稿や管理、編集作業を行うことができます。
+                        </p>
+                        <div className="flex items-center gap-2 text-accent font-black text-xs tracking-[0.3em] uppercase group-hover:translate-x-2 transition-transform">
+                            OPEN DASHBOARD <ArrowRight className="w-4 h-4" />
                         </div>
                     </Link>
                 </div>
