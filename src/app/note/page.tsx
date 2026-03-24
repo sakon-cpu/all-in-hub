@@ -68,8 +68,8 @@ export default function NotePage() {
                                 <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-accent transition-colors leading-tight">
                                     {language === 'ja' ? note.titleJa : note.titleEn}
                                 </h2>
-                                <p className="text-gray-400 text-sm mb-8 flex-1 leading-relaxed">
-                                    {language === 'ja' ? note.excerptJa : note.excerptEn}
+                                <p className="text-gray-400 text-sm mb-8 flex-1 leading-relaxed line-clamp-3">
+                                    {(language === 'ja' ? note.contentJa : note.contentEn)?.replace(/[#*`]/g, '').slice(0, 100)}...
                                 </p>
                                 <div className="flex items-center gap-3 mt-auto pt-6 border-t border-white/5">
                                     <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center">

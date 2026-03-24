@@ -99,6 +99,7 @@ export default function Home() {
   const [works, setWorks] = useState<any[]>([]);
   const [siteNews, setSiteNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -244,27 +245,26 @@ export default function Home() {
       <main className="relative z-20 pt-20 pb-20 bg-black">
         <div className="max-w-7xl mx-auto px-4">
           <BentoGrid className="mb-32">
-            {/* Main Featured Movie Card */}
             <BentoCard
-              className="md:col-span-3 md:row-span-2 group/hero border-white/5"
+              className="row-span-2 md:col-span-3 md:row-span-2 group/hero border-white/5"
               onClick={() => window.location.href = '/works'}
               noPadding
             >
-              <div className="relative w-full h-full min-h-[500px] overflow-hidden">
+              <div className="relative w-full h-full min-h-[350px] flex flex-col justify-end overflow-hidden">
                 <img
                   src="/nexus_protocol_thumb.png"
                   alt="Featured Work"
                   className="absolute inset-0 w-full h-full object-cover group-hover/hero:scale-110 transition-all duration-1000"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
-                <div className="absolute bottom-0 left-0 p-12 w-full z-20">
-                  <div className="flex items-center gap-3 mb-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10" />
+                <div className="relative z-20 p-6 md:p-10 w-full mt-auto">
+                  <div className="flex items-center gap-3 mb-3 md:mb-5">
                     <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shadow-[0_0_15px_#ff0000]" />
-                    <span className="text-accent text-sm font-black tracking-[0.5em] uppercase drop-shadow-lg">
+                    <span className="text-accent text-xs md:text-sm font-black tracking-[0.5em] uppercase drop-shadow-lg">
                       {t.home.featured}
                     </span>
                   </div>
-                  <h2 className="text-4xl md:text-7xl font-black text-white mb-10 tracking-tighter text-glow leading-[1.1] uppercase drop-shadow-2xl">
+                  <h2 className="text-3xl md:text-7xl font-black text-white mb-6 md:mb-10 tracking-tighter text-glow leading-[1.1] uppercase drop-shadow-2xl">
                     ネオ歌舞伎町 <br /> 2126
                   </h2>
                   <div className="flex items-center gap-6">
@@ -279,12 +279,13 @@ export default function Home() {
 
             {/* Site News Board */}
             <BentoCard
-              className="md:col-span-1 md:row-span-2 bg-neutral-950/40 p-8 flex flex-col border-white/5 overflow-hidden"
+              className="md:col-span-1 md:row-span-3 bg-neutral-950/40 flex flex-col border-white/5 overflow-hidden"
               title={t.home.site_news_title}
               icon={<Bell className="w-6 h-6 text-accent" />}
+              onClick={() => window.location.href = '/news'}
             >
-              <div className="mt-6 flex-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
-                {siteNews.map((news) => (
+              <div className="mt-6 flex-1 hidden md:flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+                {siteNews.slice(0, 8).map((news) => (
                   <Link href={`/news/${news.id}`} key={news.id} className="group/news border-b border-white/5 pb-6 last:border-0 cursor-pointer block">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{news.date}</span>
@@ -296,7 +297,7 @@ export default function Home() {
                   </Link>
                 ))}
                 <div className="mt-auto pt-4">
-                  <Link href="#" className="text-[11px] font-black uppercase text-gray-500 hover:text-accent transition-colors flex items-center gap-2 tracking-[0.3em]">
+                  <Link href="/news" className="text-[11px] font-black uppercase text-gray-500 hover:text-accent transition-colors flex items-center gap-2 tracking-[0.3em]">
                     View Archives <ArrowUpRight className="w-5 h-5" />
                   </Link>
                 </div>
@@ -305,27 +306,11 @@ export default function Home() {
 
             {/* Featured Creators Card */}
             <BentoCard
-              className="md:col-span-2 md:row-span-1 border-white/5 bg-neutral-900/40 p-10 border border-white/10 group/creators"
+              className="md:col-span-2 md:row-span-1 border-white/5 bg-neutral-900/40 group/creators"
               onClick={() => window.location.href = '/creator'}
               title={t.home.partners_title}
               icon={<Users className="w-6 h-6 text-accent" />}
-            >
-              <div className="mt-8 flex items-center justify-between">
-                <div className="space-y-4">
-                  <span className="text-4xl md:text-7xl font-black text-white tracking-tighter group-hover/creators:text-accent transition-colors block py-6 px-1">
-                    {t.home.partners_count}
-                  </span>
-                  <p className="text-gray-400 font-bold">{t.home.partners_desc}</p>
-                </div>
-                <div className="flex -space-x-4">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-12 h-12 rounded-full border-2 border-black glass overflow-hidden translate-y-4 group-hover/creators:translate-y-0 transition-transform">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} alt="avatar" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </BentoCard>
+            />
 
             <Link href="/note" className="md:col-span-1 md:row-span-1">
               <BentoCard
@@ -333,28 +318,7 @@ export default function Home() {
                 title={t.home.note_title}
                 description={t.home.note_desc}
                 icon={<Newspaper className="w-6 h-6 text-white" />}
-              >
-                <div className="mt-8 flex items-center justify-end">
-                  <div className="w-14 h-14 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:bg-accent transition-all group-hover:border-accent group-hover:glow-sm text-white text-glow">
-                    <ChevronRight className="w-8 h-8" />
-                  </div>
-                </div>
-              </BentoCard>
-            </Link>
-
-            <Link href="/creator" className="md:col-span-1 md:row-span-1">
-              <BentoCard
-                className="h-full flex flex-col justify-center border-white/5 group"
-                title={t.home.creator_title}
-                description={t.home.creator_desc}
-                icon={<Users className="w-6 h-6 text-white" />}
-              >
-                <div className="mt-8 flex items-center justify-end">
-                  <div className="w-14 h-14 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:bg-accent transition-all group-hover:border-accent group-hover:glow-sm text-white text-glow">
-                    <ChevronRight className="w-8 h-8" />
-                  </div>
-                </div>
-              </BentoCard>
+              />
             </Link>
           </BentoGrid>
 
@@ -375,8 +339,22 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {works.slice(0, 4).map((work) => (
-                <div key={work.id} className="group flex flex-col rounded-2xl overflow-hidden glass border-white/5 transition-all hover:glow-md hover:border-accent/10">
-                  <Link href="/works" className="relative aspect-video overflow-hidden">
+                <div 
+                  key={work.id} 
+                  className="group flex flex-col rounded-2xl overflow-hidden glass border-white/5 transition-all hover:glow-md hover:border-accent/10 cursor-pointer"
+                  onClick={() => {
+                    if (work.youtubeId) {
+                      // Extract ID from full URL if needed
+                      let id = work.youtubeId;
+                      if (id.includes('v=')) id = id.split('v=')[1].split('&')[0];
+                      else if (id.includes('youtu.be/')) id = id.split('youtu.be/')[1].split('?')[0];
+                      setSelectedVideo(id);
+                    } else {
+                      window.location.href = '/works';
+                    }
+                  }}
+                >
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={work.thumbnail}
                       alt={language === 'ja' ? work.titleJa : work.titleEn}
@@ -387,7 +365,7 @@ export default function Home() {
                         <Play className="w-10 h-10 fill-current translate-x-1" />
                       </div>
                     </div>
-                  </Link>
+                  </div>
                   <div className="p-8 flex-1 flex flex-col">
                     <div className="flex items-center justify-between mb-6">
                       <span className="text-[10px] font-black text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20 tracking-[0.2em] uppercase">
@@ -414,37 +392,42 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Join Us CTA */}
-          <section className="mt-40 grid md:grid-cols-2 gap-12 bg-neutral-950/40 rounded-3xl p-12 md:p-24 border border-white/5 relative overflow-hidden">
-            <div className="relative z-10 space-y-8">
-              <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none uppercase py-8 px-1">
-                READY TO <br /> <span className="text-accent underline decoration-accent/30">JOIN THE HUB?</span>
-              </h2>
-              <p className="text-xl text-gray-400 font-bold leading-relaxed">
-                {t.creator.desc}
-              </p>
-              <Link href="/contact" className="inline-flex items-center gap-4 px-12 py-6 bg-accent text-white rounded-full font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-accent/40 uppercase tracking-widest">
-                {t.creator.cta_button}
-                <ChevronRight className="w-6 h-6" />
-              </Link>
-            </div>
-            <div className="relative z-10 flex flex-col justify-center gap-8">
-              {t.creator.benefits.slice(0, 3).map((benefit: any, idx: number) => (
-                <div key={idx} className="flex gap-6 items-start">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 text-accent">
-                    <Sparkles className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-black text-lg text-white mb-2 uppercase tracking-tighter">{benefit.title}</h4>
-                    <p className="text-sm text-gray-500 font-medium leading-relaxed">{benefit.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-accent/5 to-transparent pointer-events-none" />
-          </section>
         </div>
       </main>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {selectedVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/95 backdrop-blur-xl"
+            onClick={() => setSelectedVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-6xl aspect-video rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,0,0,0.3)] border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedVideo(null)}
+                className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white hover:bg-accent hover:border-accent transition-all"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

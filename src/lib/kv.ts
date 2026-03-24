@@ -1,7 +1,7 @@
 import { Redis } from '@upstash/redis';
-import type { Work, NewsItem, Note } from './types';
+import type { Work, NewsItem, Note, Creator } from './types';
 
-export type { Work, NewsItem, Note };
+export type { Work, NewsItem, Note, Creator };
 
 let redis: Redis | null = null;
 
@@ -51,4 +51,16 @@ export async function getNotes(): Promise<Note[]> {
 export async function setNotes(notes: Note[]): Promise<void> {
     const db = getRedis();
     await db.set('notes', notes);
+}
+
+// --- Creators ---
+export async function getCreators(): Promise<Creator[]> {
+    const db = getRedis();
+    const data = await db.get<Creator[]>('creators');
+    return data ?? [];
+}
+
+export async function setCreators(creators: Creator[]): Promise<void> {
+    const db = getRedis();
+    await db.set('creators', creators);
 }

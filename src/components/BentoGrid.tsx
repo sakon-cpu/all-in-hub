@@ -59,17 +59,17 @@ export const BentoCard = ({
             {(title || description || icon || children) && (
                 <div className={cn(
                     "relative z-10 flex flex-col gap-2 h-full justify-between",
-                    !noPadding && "p-8"
+                    !noPadding && "p-6 md:p-8"
                 )}>
                     <div className="flex flex-col gap-2">
-                        {icon && <div className="mb-2 text-accent">{icon}</div>}
+                        {icon && <div className="mb-2 text-accent flex justify-start">{icon}</div>}
                         {title && (
-                            <h3 className="text-xl font-bold text-white group-hover:text-accent transition-colors duration-300">
+                            <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-accent transition-colors duration-300 leading-tight">
                                 {title}
                             </h3>
                         )}
                         {description && (
-                            <p className="text-sm text-gray-400 line-clamp-2">
+                            <p className="text-xs md:text-sm text-gray-400 line-clamp-2 md:line-clamp-3 hidden md:block">
                                 {description}
                             </p>
                         )}

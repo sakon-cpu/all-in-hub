@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, AlertTriangle, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, Image as ImageIcon, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import type { Work, NewsItem, Note } from '@/lib/types';
+import type { Work, NewsItem, Note, Creator } from '@/lib/types';
 
-type Tab = 'works' | 'news' | 'notes';
+type Tab = 'works' | 'news' | 'notes' | 'creators';
 
 // ---- Generic Modal ----
 function Modal({ title, onClose, onSave, children }: { title: string; onClose: () => void; onSave: () => void; children: React.ReactNode }) {
@@ -27,18 +27,35 @@ function Modal({ title, onClose, onSave, children }: { title: string; onClose: (
     );
 }
 
-function Field({ label, value, onChange, multiline = false, placeholder = '' }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string }) {
+function Field({ label, value, onChange, multiline = false, placeholder = '', type = 'text', helpText }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string; type?: string; helpText?: string }) {
     const handleInsert = (text: string) => {
         onChange(value + text);
     };
 
     return (
         <div>
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">{label}</label>
+            <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">{label}</label>
+                {helpText && <span className="text-[10px] text-accent/70 font-bold">{helpText}</span>}
+            </div>
             {multiline && <MarkdownToolbar onInsert={handleInsert} />}
-            {multiline
-                ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={8} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm resize-y" />
-                : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm" />}
+            <div className="relative group">
+                {multiline
+                    ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={8} placeholder={placeholder} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm resize-y" />
+                    : (
+                        <>
+                            <input 
+                                type={type} 
+                                value={value} 
+                                onChange={e => onChange(e.target.value)} 
+                                onClick={e => type === 'date' && (e.target as any).showPicker?.()}
+                                placeholder={placeholder} 
+                                className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm ${type === 'date' ? '[color-scheme:dark] cursor-pointer' : ''}`} 
+                            />
+                        </>
+                    )
+                }
+            </div>
         </div>
     );
 }
@@ -152,7 +169,9 @@ function WorksTab() {
         setLoading(false);
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => {
+        load();
+    }, [load]);
 
     const save = async () => {
         if (!editing) return;
@@ -197,12 +216,17 @@ function WorksTab() {
                 <Modal title={isNew ? '新しい作品' : '作品を編集'} onClose={() => setEditing(null)} onSave={save}>
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="番号 (例: 01)" value={editing.no} onChange={v => setEditing({ ...editing, no: v })} />
-                        <Field label="公開日 (例: 2026.03.10)" value={editing.date} onChange={v => setEditing({ ...editing, date: v })} />
+                        <Field 
+                            label="公開日" 
+                            type="date"
+                            value={editing.date.replace(/\./g, '-')} 
+                            onChange={v => setEditing({ ...editing, date: v ? v.replace(/-/g, '.') : '' })} 
+                        />
                     </div>
                     <Field label="タイトル（日本語）" value={editing.titleJa} onChange={v => setEditing({ ...editing, titleJa: v })} />
                     <Field label="タイトル（英語）" value={editing.titleEn} onChange={v => setEditing({ ...editing, titleEn: v })} />
-                    <Field label="あらすじ（日本語）" value={editing.synopsisJa} onChange={v => setEditing({ ...editing, synopsisJa: v })} multiline />
-                    <Field label="あらすじ（英語）" value={editing.synopsisEn} onChange={v => setEditing({ ...editing, synopsisEn: v })} multiline />
+                    <Field label="あらすじ（日本語）" value={editing.synopsisJa} onChange={v => setEditing({ ...editing, synopsisJa: v })} multiline helpText="### で文字サイズが変わります" />
+                    <Field label="あらすじ（英語）" value={editing.synopsisEn} onChange={v => setEditing({ ...editing, synopsisEn: v })} multiline helpText="### for larger text" />
                     <Field label="YouTubeリンク (入力でサムネイル自動取得)" value={editing.youtubeId || ''} onChange={handleYoutubeChange} placeholder="https://youtube.com/watch?v=..." />
                     <Field label="サムネイルURL" value={editing.thumbnail} onChange={v => setEditing({ ...editing, thumbnail: v })} placeholder="https://example.com/image.jpg" />
                 </Modal>
@@ -225,7 +249,9 @@ function NewsTab() {
         setLoading(false);
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => {
+        load();
+    }, [load]);
 
     const save = async () => {
         if (!editing) return;
@@ -272,13 +298,159 @@ function NewsTab() {
             {editing && (
                 <Modal title={isNew ? '新しいニュース' : 'ニュースを編集'} onClose={() => setEditing(null)} onSave={save}>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="日付 (例: 2026.03.10)" value={editing.date} onChange={v => setEditing({ ...editing, date: v })} />
+                        <Field 
+                            label="日付" 
+                            type="date"
+                            value={editing.date.replace(/\./g, '-')} 
+                            onChange={v => setEditing({ ...editing, date: v ? v.replace(/-/g, '.') : '' })} 
+                        />
                         <SelectField label="タイプ" value={editing.type} onChange={v => setEditing({ ...editing, type: v as NewsItem['type'] })} options={typeOptions} />
                     </div>
                     <Field label="タイトル（日本語）" value={editing.titleJa} onChange={v => setEditing({ ...editing, titleJa: v })} />
                     <Field label="タイトル（英語）" value={editing.titleEn} onChange={v => setEditing({ ...editing, titleEn: v })} />
-                    <Field label="本文（日本語 / Markdown）" value={editing.contentJa || ''} onChange={v => setEditing({ ...editing, contentJa: v })} multiline placeholder="Markdown記法が使えます..." />
-                    <Field label="本文（英語 / Markdown）" value={editing.contentEn || ''} onChange={v => setEditing({ ...editing, contentEn: v })} multiline placeholder="Markdown is supported..." />
+                    <Field label="本文（日本語 / Markdown）" value={editing.contentJa || ''} onChange={v => setEditing({ ...editing, contentJa: v })} multiline helpText="### で文頭につけると見出し・赤字になります" placeholder="Markdown記法が使えます..." />
+                    <Field label="本文（英語 / Markdown）" value={editing.contentEn || ''} onChange={v => setEditing({ ...editing, contentEn: v })} multiline helpText="### for red text heading" placeholder="Markdown is supported..." />
+                </Modal>
+            )}
+        </div>
+    );
+}
+
+// ---- Creators Tab ----
+function CreatorsTab() {
+    const [creators, setCreators] = useState<Creator[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [editing, setEditing] = useState<Creator | null>(null);
+    const [isNew, setIsNew] = useState(false);
+
+    const emptyCreator: Omit<Creator, 'id'> = { 
+        name: '', 
+        role: '', 
+        genre: '', 
+        style: '', 
+        bio: '', 
+        bioEn: '', 
+        avatar: '', 
+        sns: { x: '', ig: '' }, 
+        portfolios: [''], 
+        videos: [''] 
+    };
+
+    const load = useCallback(async () => {
+        setLoading(true);
+        const res = await fetch('/api/creators');
+        setCreators(await res.json());
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+        load();
+    }, [load]);
+
+    const save = async () => {
+        if (!editing) return;
+        if (isNew) {
+            await fetch('/api/creators', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) });
+        } else {
+            await fetch(`/api/creators/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) });
+        }
+        setEditing(null);
+        load();
+    };
+
+    const del = async (id: string) => {
+        if (!confirm('このクリエイターを削除しますか？')) return;
+        await fetch(`/api/creators/${id}`, { method: 'DELETE' });
+        load();
+    };
+
+    const updatePortfolio = (idx: number, val: string) => {
+        if (!editing) return;
+        const next = [...editing.portfolios];
+        next[idx] = val;
+        setEditing({ ...editing, portfolios: next });
+    };
+
+    const addPortfolio = () => {
+        if (!editing) return;
+        setEditing({ ...editing, portfolios: [...editing.portfolios, ''] });
+    };
+
+    const updateVideo = (idx: number, val: string) => {
+        if (!editing) return;
+        const next = [...editing.videos];
+        next[idx] = val;
+        setEditing({ ...editing, videos: next });
+    };
+
+    const addVideo = () => {
+        if (!editing) return;
+        setEditing({ ...editing, videos: [...editing.videos, ''] });
+    };
+
+    return (
+        <div>
+            <div className="flex justify-end mb-6">
+                <button onClick={() => { setEditing({ id: '', ...emptyCreator }); setIsNew(true); }} className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">
+                    <Plus className="w-4 h-4" />クリエイターを追加
+                </button>
+            </div>
+            {loading ? <div className="text-gray-500 text-center py-20">読み込み中...</div> : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {creators.map(c => (
+                        <div key={c.id} className="flex items-center gap-4 glass border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors">
+                            <img src={c.avatar} alt={c.name} className="w-12 h-12 object-cover rounded-xl flex-shrink-0 bg-neutral-800" />
+                            <div className="flex-1 min-w-0">
+                                <p className="font-black text-white truncate">{c.name}</p>
+                                <p className="text-xs text-gray-500 uppercase tracking-widest">{c.role}</p>
+                            </div>
+                            <button onClick={() => { setEditing(c); setIsNew(false); }} className="p-2 rounded-xl border border-white/10 hover:border-accent transition-colors"><Pencil className="w-4 h-4 text-gray-400" /></button>
+                            <button onClick={() => del(c.id)} className="p-2 rounded-xl border border-white/10 hover:border-red-500/50 transition-colors"><Trash2 className="w-4 h-4 text-gray-400" /></button>
+                        </div>
+                    ))}
+                </div>
+            )}
+            {editing && (
+                <Modal title={isNew ? '新しいクリエイター' : 'クリエイターを編集'} onClose={() => setEditing(null)} onSave={save}>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="名前" value={editing.name} onChange={v => setEditing({ ...editing, name: v })} />
+                        <Field label="役割 (例: AI Director)" value={editing.role} onChange={v => setEditing({ ...editing, role: v })} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="得意なジャンル (例: 実写, アニメ)" value={editing.genre || ''} onChange={v => setEditing({ ...editing, genre: v })} />
+                        <Field label="作風" value={editing.style || ''} onChange={v => setEditing({ ...editing, style: v })} />
+                    </div>
+                    <Field label="アバターURL" value={editing.avatar} onChange={v => setEditing({ ...editing, avatar: v })} placeholder="https://api.dicebear.com/..." />
+                    
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">ポートフォリオURL (複数設定可)</label>
+                        {editing.portfolios.map((p, i) => (
+                            <div key={i} className="flex gap-2">
+                                <input value={p} onChange={e => updatePortfolio(i, e.target.value)} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="https://..." />
+                                {i > 0 && <button onClick={() => setEditing({ ...editing, portfolios: editing.portfolios.filter((_, j) => i !== j) })} className="p-3 text-gray-500 hover:text-accent"><X className="w-4 h-4" /></button>}
+                            </div>
+                        ))}
+                        <button onClick={addPortfolio} className="text-[10px] font-black text-accent uppercase tracking-widest flex items-center gap-1 hover:underline ml-1"><Plus className="w-3 h-3" />URLを追加</button>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">実績動画URL (複数設定可)</label>
+                        {editing.videos.map((v, i) => (
+                            <div key={i} className="flex gap-2">
+                                <input value={v} onChange={e => updateVideo(i, e.target.value)} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="https://youtube.com/..." />
+                                {i > 0 && <button onClick={() => setEditing({ ...editing, videos: editing.videos.filter((_, j) => i !== j) })} className="p-3 text-gray-500 hover:text-accent"><X className="w-4 h-4" /></button>}
+                            </div>
+                        ))}
+                        <button onClick={addVideo} className="text-[10px] font-black text-accent uppercase tracking-widest flex items-center gap-1 hover:underline ml-1"><Plus className="w-3 h-3" />動画を追加</button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                        <Field label="X (ユーザー名)" value={editing.sns.x || ''} onChange={v => setEditing({ ...editing, sns: { ...editing.sns, x: v } })} />
+                        <Field label="Instagram (ユーザー名)" value={editing.sns.ig || ''} onChange={v => setEditing({ ...editing, sns: { ...editing.sns, ig: v } })} />
+                    </div>
+                    
+                    <Field label="自己紹介（日本語）" value={editing.bio} onChange={v => setEditing({ ...editing, bio: v })} multiline helpText="### で見出し・赤字になります" />
+                    <Field label="自己紹介（英語）" value={editing.bioEn} onChange={v => setEditing({ ...editing, bioEn: v })} multiline helpText="### for red heading" />
                 </Modal>
             )}
         </div>
@@ -299,7 +471,9 @@ function NotesTab() {
         setLoading(false);
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => {
+        load();
+    }, [load]);
 
     const save = async () => {
         if (!editing) return;
@@ -321,7 +495,7 @@ function NotesTab() {
     return (
         <div>
             <div className="flex justify-end mb-6">
-                <button onClick={() => { setEditing({ id: '', slug: '', titleJa: '', titleEn: '', excerptJa: '', excerptEn: '', contentJa: '', contentEn: '', author: '', category: '', date: '' }); setIsNew(true); }} className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">
+                <button onClick={() => { setEditing({ id: '', slug: '', titleJa: '', titleEn: '', contentJa: '', contentEn: '', author: '', category: 'VISION', date: '' }); setIsNew(true); }} className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">
                     <Plus className="w-4 h-4" />ノートを追加
                 </button>
             </div>
@@ -343,19 +517,33 @@ function NotesTab() {
             {editing && (
                 <Modal title={isNew ? '新しいノート' : 'ノートを編集'} onClose={() => setEditing(null)} onSave={save}>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="スラッグ (例: my-article)" value={editing.slug} onChange={v => setEditing({ ...editing, slug: v })} placeholder="URL用の識別子" />
-                        <Field label="日付 (例: 2026.03.10)" value={editing.date} onChange={v => setEditing({ ...editing, date: v })} />
+                        <Field 
+                            label="日付" 
+                            type="date"
+                            value={editing.date.replace(/\./g, '-')} 
+                            onChange={v => setEditing({ ...editing, date: v ? v.replace(/-/g, '.') : '' })} 
+                        />
+                        <SelectField 
+                            label="カテゴリ" 
+                            value={editing.category} 
+                            onChange={v => setEditing({ ...editing, category: v })} 
+                            options={[
+                                { value: 'VISION', label: 'ビジョン (VISION)' },
+                                { value: 'WORKFLOW', label: 'ワークフロー (WORKFLOW)' },
+                                { value: 'TECH', label: '技術解説 (TECH)' },
+                                { value: 'PROJECT', label: 'プロジェクト (PROJECT)' },
+                                { value: 'COLUMN', label: 'コラム (COLUMN)' }
+                            ]} 
+                        />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
+                        <Field label="スラッグ (URL用)" value={editing.slug} onChange={v => setEditing({ ...editing, slug: v })} placeholder="my-article" />
                         <Field label="著者" value={editing.author} onChange={v => setEditing({ ...editing, author: v })} />
-                        <Field label="カテゴリ (例: workflow)" value={editing.category} onChange={v => setEditing({ ...editing, category: v })} />
                     </div>
                     <Field label="タイトル（日本語）" value={editing.titleJa} onChange={v => setEditing({ ...editing, titleJa: v })} />
                     <Field label="タイトル（英語）" value={editing.titleEn} onChange={v => setEditing({ ...editing, titleEn: v })} />
-                    <Field label="抜粋（日本語）" value={editing.excerptJa} onChange={v => setEditing({ ...editing, excerptJa: v })} multiline />
-                    <Field label="抜粋（英語）" value={editing.excerptEn} onChange={v => setEditing({ ...editing, excerptEn: v })} multiline />
-                    <Field label="本文（日本語）" value={editing.contentJa} onChange={v => setEditing({ ...editing, contentJa: v })} multiline placeholder="Markdown記法が使えます" />
-                    <Field label="本文（英語）" value={editing.contentEn} onChange={v => setEditing({ ...editing, contentEn: v })} multiline placeholder="Markdown supported" />
+                    <Field label="本文（日本語）" value={editing.contentJa} onChange={v => setEditing({ ...editing, contentJa: v })} multiline helpText="### で文字サイズが変わります" placeholder="Markdown記法が使えます" />
+                    <Field label="本文（英語）" value={editing.contentEn} onChange={v => setEditing({ ...editing, contentEn: v })} multiline helpText="### for larger text" placeholder="Markdown supported" />
                 </Modal>
             )}
         </div>
@@ -372,9 +560,6 @@ export default function AdminPage() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const adminPw = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
-        // Client-side check against NEXT_PUBLIC_ADMIN_PASSWORD
-        // For stronger security, use an API route instead
         const res = await fetch('/api/admin-auth', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -391,6 +576,7 @@ export default function AdminPage() {
         { id: 'works' as Tab, label: '作品', icon: Film },
         { id: 'news' as Tab, label: 'ニュース', icon: Newspaper },
         { id: 'notes' as Tab, label: '制作ノート', icon: BookOpen },
+        { id: 'creators' as Tab, label: 'クリエイター', icon: Users },
     ];
 
     if (!authed) {
@@ -462,6 +648,7 @@ export default function AdminPage() {
                         {activeTab === 'works' && <WorksTab />}
                         {activeTab === 'news' && <NewsTab />}
                         {activeTab === 'notes' && <NotesTab />}
+                        {activeTab === 'creators' && <CreatorsTab />}
                     </motion.div>
                 </AnimatePresence>
             </main>

@@ -42,4 +42,14 @@ body {
   .text-glow {
     text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
   }
+
+  /* Markdown H3 (###) styling */
+  .prose h3 {
+    color: var(--accent) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+  }
 }

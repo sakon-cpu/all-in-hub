@@ -29,11 +29,23 @@ export interface Note {
     slug: string;
     titleJa: string;
     titleEn: string;
-    excerptJa: string;
-    excerptEn: string;
     contentJa: string;
     contentEn: string;
     author: string;
     category: string;
     date: string;
+}
+
+export interface Creator {
+    id: string;
+    name: string;
+    role: string;
+    genre?: string;
+    style?: string;
+    bio: string;
+    bioEn: string;
+    avatar: string;
+    sns: { x?: string; ig?: string };
+    portfolios: string[];
+    videos: string[];
 }

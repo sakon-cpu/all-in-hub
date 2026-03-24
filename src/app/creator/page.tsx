@@ -12,23 +12,14 @@ import {
     ExternalLink,
     MessageSquare,
     Sparkles,
-    Send
+    Send,
+    Play
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { handleSnsClick } from "@/lib/sns";
 import { useState, useEffect } from "react";
-
-const creators = Array.from({ length: 30 }).map((_, i) => ({
-    id: i + 1,
-    name: `Creator ${String(i + 1).padStart(2, '0')}`,
-    role: i % 3 === 0 ? "AI Director" : i % 3 === 1 ? "Visual Artist" : "Prompt Engineer",
-    bio: "AIと映像の可能性を追求する、ALL CINEMA提携クリエイター。",
-    bioEn: "ALL CINEMA partner creator exploring the possibilities of AI and film.",
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 40}`,
-    sns: { x: "allin_inc", ig: "allin_inc" },
-    portfolio: "https://all-in.co.jp"
-}));
+import type { Creator } from "@/lib/types";
 
 const Nav = () => {
     const { t } = useLanguage();
@@ -36,13 +27,9 @@ const Nav = () => {
         <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 group relative">
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center gap-1">
-                            <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase italic">
-                                <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
-                            </span>
-                        </div>
-                    </div>
+                    <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase italic">
+                        <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                    </span>
                 </Link>
                 <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
                     <ArrowLeft className="w-4 h-4" />
@@ -56,6 +43,24 @@ const Nav = () => {
 export default function CreatorPage() {
     const { t, language } = useLanguage();
     const [showSticky, setShowSticky] = useState(false);
+    const [creators, setCreators] = useState<Creator[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadCreators() {
+            try {
+                const res = await fetch('/api/creators');
+                if (res.ok) {
+                    setCreators(await res.json());
+                }
+            } catch (e) {
+                console.error("Failed to load creators", e);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadCreators();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -113,73 +118,115 @@ export default function CreatorPage() {
                         <div className="absolute -top-20 -right-20 w-96 h-96 bg-accent/5 blur-[120px] rounded-full" />
                     </header>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {creators.map((creator, idx) => (
-                            <motion.div
-                                key={creator.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                                className="group relative flex flex-col p-8 rounded-[2.5rem] glass border border-white/5 hover:border-accent/30 transition-all hover:glow-sm overflow-hidden"
-                            >
-                                <div className="flex items-start justify-between mb-8">
-                                    <div className="relative w-24 h-24 rounded-3xl overflow-hidden glass border border-white/10 group-hover:border-accent/40 group-hover:scale-105 transition-all">
-                                        <img
-                                            src={creator.avatar}
-                                            alt={creator.name}
-                                            className="w-full h-full object-cover"
-                                        />
+                    {loading ? (
+                        <div className="text-center py-20 text-gray-500 font-black uppercase tracking-widest animate-pulse">
+                            Loading Partners...
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                            {creators.map((creator, idx) => (
+                                <motion.div
+                                    key={creator.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="group relative flex flex-col p-8 rounded-[2.5rem] glass border border-white/5 hover:border-accent/30 transition-all hover:glow-sm overflow-hidden"
+                                >
+                                    <div className="flex items-start justify-between mb-8">
+                                        <div className="relative w-24 h-24 rounded-3xl overflow-hidden glass border border-white/10 group-hover:border-accent/40 group-hover:scale-105 transition-all">
+                                            <img
+                                                src={creator.avatar}
+                                                alt={creator.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <span className="text-[10px] font-black text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20 tracking-widest uppercase">
+                                                Partner
+                                            </span>
+                                            {creator.genre && (
+                                                <span className="text-[9px] font-black text-gray-400 border border-white/10 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                    {creator.genre}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col items-end gap-2">
-                                        <span className="text-[10px] font-black text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20 tracking-widest uppercase">
-                                            Partner
-                                        </span>
-                                        <span className="text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase">
-                                            ID: {String(creator.id).padStart(3, '0')}
-                                        </span>
-                                    </div>
-                                </div>
 
-                                <div className="space-y-4 mb-10">
-                                    <h3 className="text-2xl font-black italic tracking-tight group-hover:text-accent transition-colors py-4 px-1">
-                                        {creator.name}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-gray-400 font-bold text-xs uppercase tracking-widest">
-                                        <Sparkles className="w-3 h-3 text-accent" />
-                                        {creator.role}
+                                    <div className="space-y-4 mb-10">
+                                        <h3 className="text-2xl font-black italic tracking-tight group-hover:text-accent transition-colors py-4 px-1">
+                                            {creator.name}
+                                        </h3>
+                                        <div className="flex items-center gap-2 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                                            <Sparkles className="w-3 h-3 text-accent" />
+                                            {creator.role}
+                                            {creator.style && <span className="text-gray-600"> / {creator.style}</span>}
+                                        </div>
+                                        <div className="text-sm text-gray-500 font-medium leading-relaxed italic content-markdown">
+                                            {language === 'ja' ? creator.bio : creator.bioEn}
+                                        </div>
                                     </div>
-                                    <p className="text-sm text-gray-500 font-medium leading-relaxed line-clamp-2 italic">
-                                        {language === 'ja' ? creator.bio : creator.bioEn}
-                                    </p>
-                                </div>
 
-                                <div className="mt-auto flex items-center justify-between pt-6 border-t border-white/5">
-                                    <div className="flex gap-4">
-                                        <button
-                                            onClick={() => handleSnsClick('x', creator.sns.x)}
-                                            className="text-gray-600 hover:text-accent transition-all hover:scale-125"
-                                        >
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleSnsClick('instagram', creator.sns.ig)}
-                                            className="text-gray-600 hover:text-accent transition-all hover:scale-125"
-                                        >
-                                            <Instagram className="w-5 h-5" />
-                                        </button>
+                                    <div className="mt-auto space-y-4 pt-6 border-t border-white/5">
+                                        {/* Portfolio Links */}
+                                        <div className="flex flex-wrap gap-3">
+                                            {creator.portfolios.filter(Boolean).map((p, i) => (
+                                                <a
+                                                    key={i}
+                                                    href={p}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-2 text-[10px] font-black text-gray-500 hover:text-white transition-colors tracking-widest uppercase bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:border-white/20"
+                                                >
+                                                    WEB {creator.portfolios.length > 1 ? i + 1 : ''} <ExternalLink className="w-3 h-3" />
+                                                </a>
+                                            ))}
+                                            {creator.videos.filter(Boolean).map((v, i) => (
+                                                <a
+                                                    key={i}
+                                                    href={v}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-2 text-[10px] font-black text-accent hover:text-white transition-colors tracking-widest uppercase bg-accent/5 px-3 py-1.5 rounded-full border border-accent/10 hover:border-accent/30"
+                                                >
+                                                    REEL {creator.videos.length > 1 ? i + 1 : ''} <Play className="w-3 h-3 fill-current" />
+                                                </a>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex gap-4">
+                                                {creator.sns.x && (
+                                                    <button
+                                                        onClick={() => handleSnsClick('x', creator.sns.x!)}
+                                                        className="text-gray-600 hover:text-accent transition-all hover:scale-125"
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </button>
+                                                )}
+                                                {creator.sns.ig && (
+                                                    <button
+                                                        onClick={() => handleSnsClick('instagram', creator.sns.ig!)}
+                                                        className="text-gray-600 hover:text-accent transition-all hover:scale-125"
+                                                    >
+                                                        <Instagram className="w-5 h-5" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest">
+                                                ID: {creator.id.slice(0, 4)}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <a
-                                        href={creator.portfolio}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-[10px] font-black text-gray-500 hover:text-white transition-colors tracking-widest uppercase"
-                                    >
-                                        {t.creator.portfolio} <ExternalLink className="w-3 h-3" />
-                                    </a>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                    
+                    {creators.length === 0 && !loading && (
+                        <div className="text-center py-40 glass border border-white/5 rounded-[4rem]">
+                            <p className="text-gray-500 font-bold italic tracking-widest">No partners registered yet.</p>
+                        </div>
+                    )}
 
                     {/* Join Us CTA */}
                     <section className="mt-40 grid md:grid-cols-2 gap-12 bg-neutral-950/40 rounded-[4rem] p-12 md:p-24 border border-white/5 relative overflow-hidden">
