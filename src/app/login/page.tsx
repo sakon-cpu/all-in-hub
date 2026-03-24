@@ -121,7 +121,7 @@ export default function LoginPage() {
 
                 <div className="mt-8 text-center">
                     <span className="text-[10px] font-black text-gray-500 tracking-[0.5em] uppercase">
-                        Powered by ALL CINEMA HUB
+                        Powered by ALLIN CINEMA HUB
                     </span>
                 </div>
             </motion.div>

@@ -1,28 +1,32 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Play, Calendar, Film, ArrowUpRight, X, ExternalLink } from "lucide-react";
+import { ArrowLeft, Play, Calendar, Film, ArrowUpRight, X } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import type { Work } from "@/lib/types";
 
 export default function WorksPage() {
-    const { t, language } = useLanguage();
+    const { language } = useLanguage();
     const [works, setWorks] = useState<Work[]>([]);
     const [authorized, setAuthorized] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-
     useEffect(() => {
-        // 簡単な認証ガード（localhostではスキップ）
-        if (window.location.hostname !== "localhost") {
-            const auth = localStorage.getItem("temp_auth");
-            if (auth !== "true") {
-                window.location.href = "/creative-preview";
-                return;
+        // Use setTimeout to ensure state updates are batched or happen after initial render
+        setTimeout(() => {
+            
+            // 簡単な認証ガード（localhostではスキップ）
+            if (window.location.hostname !== "localhost") {
+                const auth = localStorage.getItem("temp_auth");
+                if (auth !== "true") {
+                    window.location.href = "/creative-preview";
+                    return;
+                }
             }
-        }
-        setAuthorized(true);
+            setAuthorized(true);
+        }, 0);
 
         async function loadWorks() {
             try {
@@ -39,13 +43,13 @@ export default function WorksPage() {
 
     const openVideo = (url: string | undefined) => {
         if (!url || url === "placeholder" || url === "") return;
-        
+
         let videoId: string | null = null;
-        
+
         // 1. YouTube標準の正規表現でID抽出を試行
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
-        
+
         if (match && match[2].length === 11) {
             videoId = match[2];
         } else if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
@@ -59,9 +63,9 @@ export default function WorksPage() {
                 } else if (url.includes('youtu.be/')) {
                     videoId = url.split('youtu.be/')[1].split('?')[0];
                 }
-            } catch (e) {}
+            } catch { }
         }
-        
+
         if (videoId && videoId.length === 11) {
             setSelectedVideo(videoId);
         } else {
@@ -75,11 +79,11 @@ export default function WorksPage() {
     return (
         <div className="min-h-screen bg-black text-white">
             <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
-            <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                         <Link href="/" className="flex items-center gap-2 group">
                             <span className="text-2xl font-black text-white leading-none tracking-tighter uppercase">
-                                <span className="text-accent not-italic mr-0.5">A</span>LL CINEMA
+                                <span className="text-accent not-italic mr-0.5">A</span>LLIN CINEMA
                             </span>
                         </Link>
                         <Link href="/" className="flex items-center gap-2 text-xs font-black text-white/60 hover:text-accent transition-colors uppercase tracking-widest border border-white/10 hover:border-accent/40 px-3 py-1 rounded-full">
@@ -111,7 +115,7 @@ export default function WorksPage() {
                                 COLLECTION
                             </h3>
                             <p className="text-xl md:text-3xl text-gray-400 font-bold max-w-4xl leading-relaxed italic">
-                                ALL CINEMAが手掛けた、AIと人間が織りなす次世代の映像群。
+                                ALLIN CINEMAが手掛けた、AIと人間が織りなす次世代の映像群。
                             </p>
                         </motion.div>
                         <div className="absolute -top-20 -right-20 w-96 h-96 bg-accent/5 blur-[120px] rounded-full -z-10" />
@@ -128,9 +132,10 @@ export default function WorksPage() {
                                 onClick={() => openVideo(work.youtubeId)}
                             >
                                 <div className="relative aspect-video overflow-hidden">
-                                    <img
+                                    <Image
                                         src={work.thumbnail}
                                         alt={language === 'ja' ? work.titleJa : work.titleEn}
+                                        fill
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center backdrop-blur-[2px]">
@@ -196,7 +201,7 @@ export default function WorksPage() {
                                 allowFullScreen
                                 className="w-full h-full"
                             ></iframe>
-                            
+
                             {/* Controls */}
                             <div className="absolute top-4 right-4 flex gap-2">
                                 <button

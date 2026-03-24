@@ -45,9 +45,10 @@ export const BentoCard = ({
     return (
         <motion.div
             onClick={onClick}
-            whileHover={{ y: -5, scale: 1.01 }}
+            whileHover={{ y: -8, scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className={cn(
-                "group relative flex flex-col overflow-hidden rounded-2xl glass transition-all duration-300 hover:glow-sm",
+                "group relative flex flex-col overflow-hidden rounded-3xl glass transition-all duration-500 hover:glow-md border border-white/5 hover:border-accent/20",
                 onClick && "cursor-pointer",
                 className
             )}

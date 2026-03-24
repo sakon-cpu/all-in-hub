@@ -5,18 +5,13 @@ import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import {
   Twitter as TwitterIcon,
   Instagram,
-  Send,
   Newspaper,
-  Info,
   Play,
   ArrowUpRight,
   ChevronRight,
   Globe,
-  Youtube,
   Calendar,
   Bell,
-  ExternalLink,
-  Sparkles,
   Users,
   X as CloseIcon
 } from "lucide-react";
@@ -24,6 +19,9 @@ import Link from "next/link";
 import { handleSnsClick } from "@/lib/sns";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { Work, NewsItem } from "@/lib/types";
+import { siteConfig } from "@/config/site";
 
 
 
@@ -36,11 +34,11 @@ const Nav = () => {
         <Link href="/" className="flex items-center gap-2 group relative">
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-black text-accent/80 tracking-[0.3em] uppercase leading-none mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              {language === 'ja' ? 'オールシネマ' : 'ALL CINEMA'}
+              {language === 'ja' ? 'オールインシネマ' : 'ALLIN CINEMA'}
             </span>
             <div className="flex items-center gap-1">
               <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
-                <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LLIN CINEMA
               </span>
             </div>
           </div>
@@ -79,7 +77,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
         <div className="flex flex-col items-center md:items-start gap-4">
           <span className="font-black text-4xl tracking-tighter text-white uppercase">
-            <span className="text-accent not-italic">A</span>LL CINEMA
+            <span className="text-accent not-italic">A</span>LLIN CINEMA
           </span>
           <p className="text-sm text-gray-500 font-medium max-w-xs">{t.home.footer_copy}</p>
         </div>
@@ -97,10 +95,10 @@ export default function Home() {
 
   const containerRef = useRef(null);
   const [activeVideo, setActiveVideo] = useState(0);
-  const [works, setWorks] = useState<any[]>([]);
-  const [siteNews, setSiteNews] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [works, setWorks] = useState<Work[]>([]);
+  const [siteNews, setSiteNews] = useState<NewsItem[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -122,10 +120,7 @@ export default function Home() {
     loadData();
   }, []);
 
-  const videoFiles = [
-    { src: "/hero-background.mp4", start: 0 },
-    { src: "/drone-neokabukicho.mp4", start: 1 } // Skip first second as per user request
-  ];
+  const videoFiles = siteConfig.videoFiles;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -137,7 +132,7 @@ export default function Home() {
   const contentScale = useTransform(scrollYProgress, [0, 0.4], [1, 0.95]);
 
   return (
-    <div className="min-h-screen bg-black overflow-x-hidden" ref={containerRef}>
+    <div className={`min-h-screen bg-black overflow-x-hidden transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`} ref={containerRef}>
       <Nav />
 
       {/* Dynamic Cinematic Hero */}
@@ -183,7 +178,7 @@ export default function Home() {
         >
           <div className="flex flex-col gap-2 mb-6">
             <span className="text-accent text-xs font-black tracking-[0.5em] uppercase border-b border-accent/30 inline-block w-fit pb-1 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              {language === 'ja' ? 'オールシネマ' : 'ALL CINEMA'}
+              {language === 'ja' ? 'オールインシネマ' : 'ALLIN CINEMA'}
             </span>
             <h1 className="text-5xl md:text-[10rem] font-black text-white tracking-tighter leading-[1.2] md:leading-[1.1] uppercase group drop-shadow-2xl py-8">
               <motion.span
@@ -252,10 +247,12 @@ export default function Home() {
               noPadding
             >
               <div className="relative w-full h-full min-h-[350px] flex flex-col justify-end overflow-hidden">
-                <img
+                <Image
                   src="/nexus_protocol_thumb.png"
                   alt="Featured Work"
+                  fill
                   className="absolute inset-0 w-full h-full object-cover group-hover/hero:scale-110 transition-all duration-1000"
+                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10" />
                 <div className="relative z-20 p-6 md:p-10 w-full mt-auto">
@@ -356,9 +353,10 @@ export default function Home() {
                   }}
                 >
                   <div className="relative aspect-video overflow-hidden">
-                    <img
+                    <Image
                       src={work.thumbnail}
                       alt={language === 'ja' ? work.titleJa : work.titleEn}
+                      fill
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-700 flex items-center justify-center backdrop-blur-[3px]">
@@ -384,7 +382,7 @@ export default function Home() {
                       {language === 'ja' ? work.synopsisJa : work.synopsisEn}
                     </p>
                     <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
-                      <span className="text-[9px] text-gray-500 uppercase tracking-[0.3em] font-black italic">ALL CINEMA</span>
+                      <span className="text-[9px] text-gray-500 uppercase tracking-[0.3em] font-black italic">ALLIN CINEMA</span>
                       <ArrowUpRight className="w-5 h-5 text-gray-600 group-hover:text-white group-hover:scale-125 transition-all" />
                     </div>
                   </div>

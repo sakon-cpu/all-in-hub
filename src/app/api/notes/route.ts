@@ -6,8 +6,8 @@ export async function GET() {
     try {
         const notes = await getNotes();
         return NextResponse.json(notes);
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 });
     }
 }
 
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         notes.unshift(newNote);
         await setNotes(notes);
         return NextResponse.json(newNote, { status: 201 });
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 });
     }
 }

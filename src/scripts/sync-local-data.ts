@@ -126,7 +126,7 @@ const works: Work[] = [
 const news: NewsItem[] = [
     { id: nanoid(), date: "2026.03.11", titleJa: "新作「ネオ歌舞伎町2126」を公開。30名のパートナークリエイターが参画しました。", titleEn: "New release: 'NEO KABUKICHO 2126'. 30 partner creators joined.", type: "info" },
     { id: nanoid(), date: "2026.03.05", titleJa: "制作ノート#11：サウンドデザインの自動化について更新。", titleEn: "Production Note #11: Automation in Sound Design.", type: "update" },
-    { id: nanoid(), date: "2026.02.28", titleJa: "ALL CINEMAクリエイター募集要項を改訂しました。", titleEn: "Updated guidelines for ALL CINEMA Creator applications.", type: "recruit" }
+    { id: nanoid(), date: "2026.02.28", titleJa: "ALLIN CINEMAクリエイター募集要項を改訂しました。", titleEn: "Updated guidelines for ALLIN CINEMA Creator applications.", type: "recruit" }
 ];
 
 const notes: Note[] = [

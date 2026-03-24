@@ -8,14 +8,13 @@ import { useState, useEffect } from "react";
 import type { NewsItem } from "@/lib/types";
 
 const Nav = () => {
-    const { t } = useLanguage();
     return (
         <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
                     <Link href="/" className="flex items-center gap-2 group relative">
                         <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
-                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LLIN CINEMA
                         </span>
                     </Link>
                     <Link href="/" className="flex items-center gap-2 text-xs font-black text-white/60 hover:text-accent transition-colors uppercase tracking-widest border border-white/10 hover:border-accent/40 px-3 py-1 rounded-full">
@@ -29,7 +28,7 @@ const Nav = () => {
 };
 
 export default function NewsPage() {
-    const { t, language } = useLanguage();
+    const { language } = useLanguage();
     const [newsList, setNewsList] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
 

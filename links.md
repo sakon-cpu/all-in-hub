@@ -6,7 +6,7 @@
 
 ## 管理者・メンバー共有用情報
 
-### ALL CINEMA Hub 管理画面（Admin Dashboard）
+### ALLIN CINEMA Hub 管理画面（Admin Dashboard）
 *   **URL**: `https://all-in-hub-4pg9.vercel.app/admin` または `http://localhost:3000/admin`
 *   **機能**: 作品（Works）、ニュース（News）、制作ノート（Notes）の「追加・編集・削除」が可能です。
 *   **注意**: ログインには別途設定した `管理者パスワード` が必要です。

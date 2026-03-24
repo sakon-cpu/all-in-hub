@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
@@ -8,9 +7,9 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import type { NewsItem } from "@/lib/types";
 
-export default function NewsDetailPage({ params }: { params: { id: string } }) {
+export default function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { t, language } = useLanguage();
-    const { id } = React.use(params as any) as any;
+    const { id } = React.use(params);
     const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -49,7 +48,7 @@ export default function NewsDetailPage({ params }: { params: { id: string } }) {
                 <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 group">
                         <span className="text-2xl font-black italic tracking-tighter">
-                            <span className="text-accent underline decoration-accent/30 underline-offset-4 not-italic mr-1">A</span>CINEMA
+                            <span className="text-accent underline decoration-accent/30 underline-offset-4 not-italic mr-1">A</span>LLIN CINEMA
                         </span>
                     </Link>
                     <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
@@ -76,7 +75,7 @@ export default function NewsDetailPage({ params }: { params: { id: string } }) {
 
                     <div className="flex items-center justify-between py-6 border-y border-white/5">
                         <div className="text-sm font-bold text-gray-400">
-                            ALL CINEMA PRESS
+                            ALLIN CINEMA PRESS
                         </div>
                         <button className="p-3 rounded-full glass hover:bg-white/5 transition-colors">
                             <Share2 className="w-4 h-4" />

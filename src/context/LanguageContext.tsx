@@ -13,13 +13,17 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [language, setLanguage] = useState<Language>('ja');
+    const [mounted, setMounted] = useState(false);
 
     // Load language preference from localStorage if available
     useEffect(() => {
         const savedLang = localStorage.getItem('preferred_language') as Language;
-        if (savedLang && (savedLang === 'ja' || savedLang === 'en')) {
-            setLanguage(savedLang);
-        }
+        setTimeout(() => {
+            if (savedLang && (savedLang === 'ja' || savedLang === 'en')) {
+                setLanguage(savedLang);
+            }
+            setMounted(true);
+        }, 0);
     }, []);
 
     const handleSetLanguage = (lang: Language) => {
@@ -28,6 +32,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const t = translations[language];
+
+    // Prevent hydration mismatch by not rendering anything until mounted
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>

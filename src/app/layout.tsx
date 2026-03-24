@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ALL CINEMA | Next-Gen AI Film Production Hub",
-  description: "Official hub for ALL CINEMA, the AI-driven movie production platform merging technology and human creativity.",
+  title: "ALLIN CINEMA | Next-Gen AI Film Production Hub",
+  description: "Official hub for ALLIN CINEMA, the AI-driven movie production platform merging technology and human creativity.",
 };
 
 export default function RootLayout({

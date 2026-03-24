@@ -6,11 +6,13 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import { useLanguage } from "@/context/LanguageContext";
+import Image from "next/image";
+import { Note } from "@/lib/types";
 
-export default function NoteDetailPage({ params }: { params: { slug: string } }) {
+export default function NoteDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { t, language } = useLanguage();
-    const { slug } = React.use(params as any) as any;
-    const [note, setNote] = useState<any>(null);
+    const { slug } = React.use(params);
+    const [note, setNote] = useState<Note | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,8 +20,8 @@ export default function NoteDetailPage({ params }: { params: { slug: string } })
             try {
                 const res = await fetch('/api/notes');
                 if (res.ok) {
-                    const notes = await res.json();
-                    const found = notes.find((n: any) => n.slug === slug);
+                    const notes: Note[] = await res.json();
+                    const found = notes.find((n) => n.slug === slug);
                     setNote(found || null);
                 }
             } catch (e) {
@@ -80,17 +82,22 @@ export default function NoteDetailPage({ params }: { params: { slug: string } })
                     <ReactMarkdown
                         rehypePlugins={[rehypeRaw]}
                         components={{
-                            p: ({ node, ...props }) => <p className="mb-8" {...props} />,
-                            h1: ({ node, ...props }) => <h1 className="text-3xl md:text-5xl font-black text-white mt-16 mb-8 tracking-tighter uppercase" {...props} />,
-                            h2: ({ node, ...props }) => <h2 className="text-2xl md:text-3xl font-bold text-white mt-16 mb-6 tracking-tight border-b border-white/10 pb-4" {...props} />,
-                            h3: ({ node, ...props }) => <h3 className="text-xl font-bold text-accent mt-10 mb-4 tracking-widest uppercase" {...props} />,
-                            a: ({ node, ...props }) => <a className="text-accent hover:text-white underline decoration-accent/30 underline-offset-4 transition-colors font-medium" {...props} />,
-                            blockquote: ({ node, ...props }) => (
+                            p: ({ ...props }) => <p className="mb-8" {...props} />,
+                            h1: ({ ...props }) => <h1 className="text-3xl md:text-5xl font-black text-white mt-16 mb-8 tracking-tighter uppercase" {...props} />,
+                            h2: ({ ...props }) => <h2 className="text-2xl md:text-3xl font-bold text-white mt-16 mb-6 tracking-tight border-b border-white/10 pb-4" {...props} />,
+                            h3: ({ ...props }) => <h3 className="text-xl font-bold text-accent mt-10 mb-4 tracking-widest uppercase" {...props} />,
+                            a: ({ ...props }) => <a className="text-accent hover:text-white underline decoration-accent/30 underline-offset-4 transition-colors font-medium" {...props} />,
+                            blockquote: ({ ...props }) => (
                                 <blockquote className="my-12 pl-6 md:pl-8 border-l-2 border-accent/50 bg-accent/5 py-4 pr-4 rounded-r-2xl italic text-gray-400 font-medium" {...props} />
                             ),
-                            img: ({ node, ...props }) => (
-                                <span className="block my-12 rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl">
-                                    <img className="w-full h-auto object-cover max-h-[70vh]" {...props} />
+                            img: ({ ...props }) => (
+                                <span className="block my-12 rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl relative aspect-video">
+                                    <Image 
+                                        src={(props.src as string) || ''} 
+                                        alt={(props.alt as string) || ''} 
+                                        fill 
+                                        className="w-full h-auto object-cover" 
+                                    />
                                 </span>
                             ),
                         }}

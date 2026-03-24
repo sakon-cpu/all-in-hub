@@ -4,32 +4,29 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Twitter as X,
     Instagram,
-    Globe,
     ChevronRight,
     ArrowLeft,
     Users,
-    Briefcase,
-    ExternalLink,
-    MessageSquare,
     Sparkles,
     Send,
-    Play
+    Play,
+    ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { handleSnsClick } from "@/lib/sns";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import type { Creator } from "@/lib/types";
 
 const Nav = () => {
-    const { t } = useLanguage();
     return (
         <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
                     <Link href="/" className="flex items-center gap-2 group relative">
                         <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
-                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LLIN CINEMA
                         </span>
                     </Link>
                     <Link href="/" className="flex items-center gap-2 text-xs font-black text-white/60 hover:text-accent transition-colors uppercase tracking-widest border border-white/10 hover:border-accent/40 px-3 py-1 rounded-full">
@@ -136,9 +133,10 @@ export default function CreatorPage() {
                                 >
                                     <div className="flex items-start justify-between mb-8">
                                         <div className="relative w-24 h-24 rounded-3xl overflow-hidden glass border border-white/10 group-hover:border-accent/40 group-hover:scale-105 transition-all">
-                                            <img
+                                            <Image
                                                 src={creator.avatar}
                                                 alt={creator.name}
+                                                fill
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
@@ -245,7 +243,7 @@ export default function CreatorPage() {
                             </Link>
                         </div>
                         <div className="relative z-10 flex flex-col justify-center gap-8">
-                            {t.creator.benefits.slice(0, 3).map((benefit: any, idx: number) => (
+                            {t.creator.benefits.slice(0, 3).map((benefit: { title: string; desc: string }, idx: number) => (
                                 <div key={idx} className="flex gap-6 items-start">
                                     <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 text-accent">
                                         <Sparkles className="w-6 h-6" />

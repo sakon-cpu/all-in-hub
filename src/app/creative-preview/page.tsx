@@ -15,9 +15,11 @@ export default function PreviewPage() {
 
     useEffect(() => {
         const auth = localStorage.getItem("temp_auth");
-        if (auth === "true") {
-            setIsAuthenticated(true);
-        }
+        setTimeout(() => {
+            if (auth === "true") {
+                setIsAuthenticated(true);
+            }
+        }, 0);
     }, []);
 
     const handleLogin = (e: React.FormEvent) => {
@@ -93,7 +95,7 @@ export default function PreviewPage() {
                         SELECT <br /> <span className="text-accent underline decoration-accent/30 underline-offset-8">PORTAL</span>
                     </h1>
                     <p className="text-lg md:text-xl text-gray-400 font-bold italic leading-relaxed max-w-2xl">
-                        ALL CINEMA関係者専用ポータル。閲覧、または管理のいずれかを選択してください。
+                        ALLIN CINEMA関係者専用ポータル。閲覧、または管理のいずれかを選択してください。
                     </p>
                 </header>
 
@@ -105,7 +107,7 @@ export default function PreviewPage() {
                             <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-10 border border-white/10 group-hover:scale-110 group-hover:bg-accent group-hover:border-accent transition-all duration-500">
                                 <Film className="w-8 h-8 text-white" />
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter">ALL CINEMA <br /><span className="text-accent">HUB</span></h2>
+                            <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter">ALLIN CINEMA <br /><span className="text-accent">HUB</span></h2>
                             <p className="text-gray-400 font-bold text-lg mb-12 flex-1 leading-relaxed">
                                 一般公開されている本番サイトの全ページを確認します。最新のアニメーションやビジュアル体験をチェック。
                             </p>

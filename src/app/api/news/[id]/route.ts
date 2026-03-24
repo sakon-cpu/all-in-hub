@@ -11,8 +11,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         news[idx] = { ...news[idx], ...body };
         await setNews(news);
         return NextResponse.json(news[idx]);
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 });
     }
 }
 
@@ -23,7 +23,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         const filtered = news.filter(n => n.id !== id);
         await setNews(filtered);
         return NextResponse.json({ success: true });
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 });
     }
 }

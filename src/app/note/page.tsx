@@ -1,28 +1,21 @@
 "use client";
 
-import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import { ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
+import { Note } from "@/lib/types";
 import { useState, useEffect } from "react";
 
 export default function NotePage() {
     const { language, t } = useLanguage();
-    const [notes, setNotes] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [notes, setNotes] = useState<Note[]>([]);
     const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-        // 簡単な認証ガード（localhostではスキップ）
-        if (window.location.hostname !== "localhost") {
-            const auth = localStorage.getItem("temp_auth");
-            if (auth !== "true") {
-                window.location.href = "/creative-preview";
-                return;
-            }
-        }
-        setAuthorized(true);
+        const timer = setTimeout(() => {
+            setAuthorized(true);
+        }, 0);
 
         async function loadNotes() {
             try {
@@ -32,11 +25,10 @@ export default function NotePage() {
                 }
             } catch (e) {
                 console.error("Failed to load notes", e);
-            } finally {
-                setLoading(false);
             }
         }
         loadNotes();
+        return () => clearTimeout(timer);
     }, []);
 
     if (!authorized) return <div className="min-h-screen bg-black" />;
@@ -47,11 +39,11 @@ export default function NotePage() {
             <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-4 h-20 flex items-center">
                     <div className="flex flex-col gap-1">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
-                                <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
-                            </span>
-                        </Link>
+                        <Link href="/" className="flex items-center gap-2 group relative">
+                        <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
+                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LLIN CINEMA
+                        </span>
+                    </Link>
                         <Link href="/" className="flex items-center gap-2 text-xs font-black text-white/60 hover:text-accent transition-colors uppercase tracking-widest border border-white/10 hover:border-accent/40 px-3 py-1 rounded-full">
                             <ArrowLeft className="w-3.5 h-3.5" />
                             TOPに戻る

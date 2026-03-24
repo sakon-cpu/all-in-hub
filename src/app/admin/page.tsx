@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Shield, LogOut, Film, Newspaper, BookOpen, X, Save, ChevronRight, Image as ImageIcon, Users } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import type { Work, NewsItem, Note, Creator } from '@/lib/types';
 
 type Tab = 'works' | 'news' | 'notes' | 'creators';
@@ -48,7 +48,14 @@ function Field({ label, value, onChange, multiline = false, placeholder = '', ty
                                 type={type} 
                                 value={value} 
                                 onChange={e => onChange(e.target.value)} 
-                                onClick={e => type === 'date' && (e.target as any).showPicker?.()}
+                                onClick={e => {
+                                    if (type === 'date') {
+                                        const target = e.target as HTMLInputElement;
+                                        if ('showPicker' in target) {
+                                            (target as HTMLInputElement & { showPicker: () => void }).showPicker();
+                                        }
+                                    }
+                                }}
                                 placeholder={placeholder} 
                                 className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all font-medium text-sm ${type === 'date' ? '[color-scheme:dark] cursor-pointer' : ''}`} 
                             />
@@ -152,7 +159,7 @@ function WorksTab() {
             } else if (url.includes('youtu.be/')) {
                 videoId = url.split('youtu.be/')[1].split('?')[0];
             }
-        } catch (e) { }
+        } catch { }
 
         if (videoId) {
             const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
@@ -170,7 +177,13 @@ function WorksTab() {
     }, []);
 
     useEffect(() => {
-        load();
+        let mounted = true;
+        if (mounted) {
+            setTimeout(() => {
+                if (mounted) load();
+            }, 0);
+        }
+        return () => { mounted = false; };
     }, [load]);
 
     const save = async () => {
@@ -201,7 +214,9 @@ function WorksTab() {
                 <div className="space-y-3">
                     {works.map(w => (
                         <div key={w.id} className="flex items-center gap-4 glass border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors">
-                            <img src={w.thumbnail} alt={w.titleJa} className="w-16 h-10 object-cover rounded-xl flex-shrink-0 bg-neutral-800" onError={e => (e.currentTarget.style.display = 'none')} />
+                            <div className="w-16 h-10 relative rounded-xl overflow-hidden flex-shrink-0 bg-neutral-800">
+                                <Image src={w.thumbnail} alt={w.titleJa} fill className="object-cover" />
+                            </div>
                             <div className="flex-1 min-w-0">
                                 <p className="font-black text-white truncate">{w.titleJa}</p>
                                 <p className="text-xs text-gray-500 uppercase tracking-widest">#{w.no} · {w.date}</p>
@@ -250,7 +265,13 @@ function NewsTab() {
     }, []);
 
     useEffect(() => {
-        load();
+        let mounted = true;
+        if (mounted) {
+            setTimeout(() => {
+                if (mounted) load();
+            }, 0);
+        }
+        return () => { mounted = false; };
     }, [load]);
 
     const save = async () => {
@@ -344,7 +365,13 @@ function CreatorsTab() {
     }, []);
 
     useEffect(() => {
-        load();
+        let mounted = true;
+        if (mounted) {
+            setTimeout(() => {
+                if (mounted) load();
+            }, 0);
+        }
+        return () => { mounted = false; };
     }, [load]);
 
     const save = async () => {
@@ -399,7 +426,9 @@ function CreatorsTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {creators.map(c => (
                         <div key={c.id} className="flex items-center gap-4 glass border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors">
-                            <img src={c.avatar} alt={c.name} className="w-12 h-12 object-cover rounded-xl flex-shrink-0 bg-neutral-800" />
+                            <div className="w-12 h-12 relative rounded-xl overflow-hidden flex-shrink-0 bg-neutral-800">
+                                <Image src={c.avatar} alt={c.name} fill className="object-cover" />
+                            </div>
                             <div className="flex-1 min-w-0">
                                 <p className="font-black text-white truncate">{c.name}</p>
                                 <p className="text-xs text-gray-500 uppercase tracking-widest">{c.role}</p>
@@ -472,7 +501,13 @@ function NotesTab() {
     }, []);
 
     useEffect(() => {
-        load();
+        let mounted = true;
+        if (mounted) {
+            setTimeout(() => {
+                if (mounted) load();
+            }, 0);
+        }
+        return () => { mounted = false; };
     }, [load]);
 
     const save = async () => {
@@ -556,7 +591,6 @@ export default function AdminPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('works');
-    const router = useRouter();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -614,7 +648,7 @@ export default function AdminPage() {
                         <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center border border-accent/30">
                             <Shield className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="font-black text-white uppercase tracking-widest text-sm">ALL CINEMA Admin</span>
+                        <span className="font-black text-white uppercase tracking-widest text-sm">ALLIN CINEMA Admin</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <a href="/" target="_blank" className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 uppercase tracking-widest font-bold">
