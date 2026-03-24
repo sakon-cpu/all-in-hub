@@ -76,14 +76,14 @@ export default function WorksPage() {
         <div className="min-h-screen bg-black text-white">
             <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-6">
+                    <div className="flex flex-col gap-1">
                         <Link href="/" className="flex items-center gap-2 group">
                             <span className="text-2xl font-black text-white leading-none tracking-tighter uppercase">
                                 <span className="text-accent not-italic mr-0.5">A</span>LL CINEMA
                             </span>
                         </Link>
-                        <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest border-l border-white/10 pl-6">
-                            <ArrowLeft className="w-4 h-4" />
+                        <Link href="/" className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 hover:text-accent transition-colors uppercase tracking-widest">
+                            <ArrowLeft className="w-3 h-3" />
                             TOPに戻る
                         </Link>
                     </div>
