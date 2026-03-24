@@ -32,8 +32,8 @@ const Nav = () => {
                             <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
                         </span>
                     </Link>
-                    <Link href="/" className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 hover:text-accent transition-colors uppercase tracking-widest">
-                        <ArrowLeft className="w-3 h-3" />
+                    <Link href="/" className="flex items-center gap-2 text-xs font-black text-white/60 hover:text-accent transition-colors uppercase tracking-widest border border-white/10 hover:border-accent/40 px-3 py-1 rounded-full">
+                        <ArrowLeft className="w-3.5 h-3.5" />
                         TOPに戻る
                     </Link>
                 </div>
