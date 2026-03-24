@@ -75,16 +75,18 @@ export default function WorksPage() {
     return (
         <div className="min-h-screen bg-black text-white">
             <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
-                <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <span className="text-2xl font-black italic tracking-tighter">
-                            <span className="text-accent underline decoration-accent/30 underline-offset-4 not-italic mr-1">A</span>CINEMA
-                        </span>
-                    </Link>
-                    <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
-                        <ArrowLeft className="w-4 h-4" />
-                        {t.nav.hub}
-                    </Link>
+            <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                        <Link href="/" className="flex items-center gap-2 group">
+                            <span className="text-2xl font-black text-white leading-none tracking-tighter uppercase">
+                                <span className="text-accent not-italic mr-0.5">A</span>LL CINEMA
+                            </span>
+                        </Link>
+                        <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest border-l border-white/10 pl-6">
+                            <ArrowLeft className="w-4 h-4" />
+                            TOPに戻る
+                        </Link>
+                    </div>
                 </div>
             </nav>
 
@@ -197,15 +199,6 @@ export default function WorksPage() {
                             
                             {/* Controls */}
                             <div className="absolute top-4 right-4 flex gap-2">
-                                <a 
-                                    href={`https://www.youtube.com/watch?v=${selectedVideo}`} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md transition-colors border border-white/10"
-                                    title="YouTubeで直接見る"
-                                >
-                                    <ExternalLink className="w-4 h-4 text-white" />
-                                </a>
                                 <button
                                     onClick={() => setSelectedVideo(null)}
                                     className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:rotate-90"

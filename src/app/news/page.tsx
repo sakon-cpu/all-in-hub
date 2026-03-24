@@ -12,15 +12,17 @@ const Nav = () => {
     return (
         <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 group relative">
-                    <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase italic">
-                        <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
-                    </span>
-                </Link>
-                <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
-                    <ArrowLeft className="w-4 h-4" />
-                    BACK TO HUB
-                </Link>
+                <div className="flex items-center gap-6">
+                    <Link href="/" className="flex items-center gap-2 group relative">
+                        <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
+                            <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                        </span>
+                    </Link>
+                    <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest border-l border-white/10 pl-6">
+                        <ArrowLeft className="w-4 h-4" />
+                        TOPに戻る
+                    </Link>
+                </div>
             </div>
         </nav>
     );

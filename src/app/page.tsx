@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import {
-  Twitter as X,
+  Twitter as TwitterIcon,
   Instagram,
   Send,
   Newspaper,
@@ -17,7 +17,8 @@ import {
   Bell,
   ExternalLink,
   Sparkles,
-  Users
+  Users,
+  X as CloseIcon
 } from "lucide-react";
 import Link from "next/link";
 import { handleSnsClick } from "@/lib/sns";
@@ -83,7 +84,7 @@ const Footer = () => {
           <p className="text-sm text-gray-500 font-medium max-w-xs">{t.home.footer_copy}</p>
         </div>
         <div className="flex gap-10">
-          <button onClick={() => handleSnsClick('x', 'allin_inc')} className="hover:text-accent transition-all scale-100 hover:scale-110 cursor-pointer text-gray-400"><X className="w-7 h-7" /></button>
+          <button onClick={() => handleSnsClick('x', 'allin_inc')} className="hover:text-accent transition-all scale-100 hover:scale-110 cursor-pointer text-gray-400"><TwitterIcon className="w-7 h-7" /></button>
           <button onClick={() => handleSnsClick('instagram', 'allin_inc')} className="hover:text-accent transition-all scale-100 hover:scale-110 cursor-pointer text-gray-400"><Instagram className="w-7 h-7" /></button>
         </div>
       </div>
@@ -268,7 +269,7 @@ export default function Home() {
                     ネオ歌舞伎町 <br /> 2126
                   </h2>
                   <div className="flex items-center gap-6">
-                    <button className="flex items-center gap-3 px-10 py-4 bg-white text-black rounded-full font-black hover:bg-accent hover:text-white transition-all shadow-2xl hover:shadow-accent/40 group/btn uppercase tracking-widest text-xs">
+                    <button onClick={(e) => { e.stopPropagation(); const id = works[0]?.youtubeId; if (id) setSelectedVideo(id); }} className="flex items-center gap-3 px-10 py-4 bg-white text-black rounded-full font-black hover:bg-accent hover:text-white transition-all shadow-2xl hover:shadow-accent/40 group/btn uppercase tracking-widest text-xs">
                       <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" />
                       {t.home.play_trailer}
                     </button>
@@ -416,7 +417,7 @@ export default function Home() {
                 onClick={() => setSelectedVideo(null)}
                 className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white hover:bg-accent hover:border-accent transition-all"
               >
-                <X className="w-6 h-6" />
+                <CloseIcon className="w-6 h-6" />
               </button>
               <iframe
                 src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}

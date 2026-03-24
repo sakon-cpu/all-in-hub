@@ -1,7 +1,7 @@
 "use client";
 
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
-import { Send, ArrowLeft, User } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -43,11 +43,23 @@ export default function NotePage() {
 
     return (
         <div className="min-h-screen pt-32 pb-20">
+            {/* Nav */}
+            <nav className="fixed top-0 w-full z-50 glass border-b border-white/5">
+                <div className="max-w-7xl mx-auto px-4 h-20 flex items-center">
+                    <div className="flex items-center gap-6">
+                        <Link href="/" className="flex items-center gap-2 group">
+                            <span className="text-3xl font-black text-white leading-none tracking-tighter uppercase">
+                                <span className="text-accent inline-block scale-125 origin-bottom relative top-[-1px] not-italic mr-1">A</span>LL CINEMA
+                            </span>
+                        </Link>
+                        <Link href="/" className="flex items-center gap-2 text-xs font-black text-gray-400 hover:text-white transition-colors uppercase tracking-widest border-l border-white/10 pl-6">
+                            <ArrowLeft className="w-4 h-4" />
+                            TOPに戻る
+                        </Link>
+                    </div>
+                </div>
+            </nav>
             <div className="max-w-7xl mx-auto px-4 mb-16">
-                <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
-                    <ArrowLeft className="w-4 h-4" />
-                    {t.note.back}
-                </Link>
                 <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter">
                     {t.note.title} <span className="text-accent text-glow">{t.note.subtitle}</span>
                 </h1>
